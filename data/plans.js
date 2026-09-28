@@ -1,0 +1,57 @@
+export const FAMILY = [
+  {
+    id: "free",
+    name: "Today",
+    price: "₹0",
+    period: "",
+    who: "Anyone",
+    items: ["Today’s tithi for one city", "Map pin", "Widget preview"],
+    cta: "Use free",
+    href: "/",
+  },
+  {
+    id: "dainik",
+    name: "Dainik",
+    price: "₹499",
+    period: "/ year",
+    who: "One household",
+    items: ["Month calendar", "Email tithi alerts", "3 saved tithis (janma / vivaah / shraaddha)", "Renews each year"],
+    cta: "Start Dainik",
+    href: "/start?plan=dainik",
+    featured: true,
+  },
+  {
+    id: "parivar",
+    name: "Parivar",
+    price: "₹699",
+    period: "/ year",
+    who: "Family",
+    items: ["Everything in Dainik", "8 saved tithis", "WhatsApp when we switch it on", "2 cities"],
+    cta: "Start Parivar",
+    href: "/start?plan=parivar",
+  },
+];
+
+export const TEMPLE = [
+  {
+    id: "self",
+    name: "Self-serve",
+    price: "₹2,000",
+    period: "/ month",
+    who: "Temple or trust site",
+    items: ["Widget + month grid", "One city", "You paste the snippet", "Email support"],
+    cta: "Start self-serve",
+    href: "/start?plan=self",
+  },
+  {
+    id: "managed",
+    name: "We manage",
+    price: "₹5,000",
+    period: "/ month",
+    who: "Trust office",
+    items: ["We install", "Festival list for the year", "Email to the office", "One revision / month"],
+    cta: "Start managed",
+    href: "/start?plan=managed",
+    featured: true,
+  },
+];

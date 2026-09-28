@@ -2,8 +2,8 @@ import "./globals.css";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Panchaang.in",
-  description: "Tithi calendar, alerts, and temple widgets",
+  title: "Panchaang.in — tithi, calendar, temple widgets",
+  description: "Family tithi alerts and temple widgets. Own engine. India first.",
 };
 
 export default function RootLayout({ children }) {
@@ -11,17 +11,29 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <header>
-          <Link href="/">Panchaang.in</Link>
+          <Link href="/" className="brand">Panchaang.in</Link>
           <nav>
-            <Link href="/calendar">Calendar</Link>
-            <Link href="/widget">Widget</Link>
+            <Link href="/features">Features</Link>
+            <Link href="/pricing">Pricing</Link>
             <Link href="/temples">Temples</Link>
+            <Link href="/widget">Widget</Link>
+            <Link href="/start" className="btn nav-cta">Start</Link>
           </nav>
         </header>
         <main>{children}</main>
-        <footer className="muted">
-          Place names use a seed list of world cities. Full gazetteer next.
-          Map: Google. Engine: ours.
+        <footer>
+          <div>
+            <Link href="/pricing">Pricing</Link>
+            {" · "}
+            <Link href="/alerts">Alerts</Link>
+            {" · "}
+            <Link href="/legal/terms">Terms</Link>
+            {" · "}
+            <Link href="/legal/privacy">Privacy</Link>
+          </div>
+          <p className="muted">
+            Families and temples. Not SanatanSevaSetu. legal@theiaone-ai.com
+          </p>
         </footer>
       </body>
     </html>
