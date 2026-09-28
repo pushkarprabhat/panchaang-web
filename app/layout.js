@@ -19,7 +19,10 @@ export default function RootLayout({ children }) {
           </nav>
         </header>
         <main>{children}</main>
-        <footer className="muted">Owned engine. Amanta default. Sunrise tithi. Not Drik.</footer>
+        <footer className="muted">
+          Place names use a seed list of world cities. Full gazetteer next.
+          Map: Google. Engine: ours.
+        </footer>
       </body>
     </html>
   );

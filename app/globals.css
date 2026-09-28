@@ -23,3 +23,7 @@ table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
 td, th { border-bottom: 1px solid var(--line); padding: 0.45rem 0.3rem; text-align: left; }
 pre { background: #120c08; padding: 0.8rem; border-radius: 8px; overflow: auto; font-size: 0.8rem; }
 input, select { background: #120c08; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 0.45rem 0.6rem; }
+.suggest { list-style: none; margin: 0.4rem 0 0; padding: 0; border: 1px solid var(--line); border-radius: 8px; max-height: 240px; overflow: auto; background: #120c08; }
+.suggest li { border-bottom: 1px solid var(--line); }
+.suggest-btn { width: 100%; text-align: left; background: transparent; color: var(--ink); border: 0; border-radius: 0; font-weight: 400; padding: 0.5rem 0.7rem; }
+.suggest-btn:hover { background: #2a1d14; }
