@@ -10,6 +10,9 @@ const WATCH = [
   { label: "Purnima", paksha: "Shukla", tithi: 15 },
   { label: "Krishna Ekadashi", paksha: "Krishna", tithi: 11 },
   { label: "Amavasya", paksha: "Krishna", tithi: 15 },
+  { label: "Shukla Ashtami", paksha: "Shukla", tithi: 8 },
+  { label: "Krishna Ashtami", paksha: "Krishna", tithi: 8 },
+  { label: "Sankashti (Krishna Chaturthi)", paksha: "Krishna", tithi: 4 },
 ];
 
 export default function FestivalsPage() {
@@ -39,10 +42,10 @@ export default function FestivalsPage() {
   return (
     <>
       <p className="eyebrow">Look ahead</p>
-      <h1>Ekadashi, purnima, amavasya</h1>
+      <h1>Forthcoming tithis</h1>
       <p className="lead">
-        Next dates from the engine for this city. Festival *names* (Ekadashi titles, Diwali)
-        are not labelled yet — only the tithi.
+        Ekadashi, ashtami, Sankashti, purnima, amavasya — from the engine.
+        Named vrat titles (Vinayaka Chaturthi, Janmashtami) come after month names.
       </p>
       <p>
         <input value={city} onChange={(e) => setCity(e.target.value)} />{" "}
