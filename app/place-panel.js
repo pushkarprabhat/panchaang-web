@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { PLACES } from "../data/places";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
 
 export default function PlacePanel() {
   const [q, setQ] = useState("Ahmedabad");
@@ -29,19 +29,15 @@ export default function PlacePanel() {
     setOpen(false);
     setData(null);
     setErr("");
-    if (!API) {
-      setErr("Engine not public yet. Place and map are ready.");
-      return;
-    }
     fetch(
-      `${API}/v1/panchang?lat=${p.lat}&lon=${p.lon}&city=${encodeURIComponent(p.name)}`
+      `${API}/v1/panchang?city=${encodeURIComponent(p.name)}&latitude=${p.lat}&longitude=${p.lon}`
     )
       .then((r) => r.json())
       .then(setData)
       .catch(() => setErr("Engine offline"));
   }
 
-  const snippet = `<script src="https://panchaang.in/embed.js" data-city="${place.name}" data-lat="${place.lat}" data-lon="${place.lon}"></script>`;
+  const snippet = `<script src="https://panchaang.in/embed.js" data-city="${place.name}" data-api="https://api.panchaang.in"></script>`;
   const mapSrc = `https://maps.google.com/maps?q=${place.lat},${place.lon}&z=11&output=embed`;
 
   return (
