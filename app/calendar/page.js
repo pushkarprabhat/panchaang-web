@@ -1,62 +1,114 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { tithiName } from "../panchang-labels";
+import { useEffect, useMemo, useState } from "react";
+import { observances, tithiName } from "../panchang-labels";
+import { festivalsOn } from "../../data/festivals-2026";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
+const CITIES = ["Ahmedabad", "Ujjain", "Jaipur", "Mumbai", "Delhi", "Varanasi", "Kolkata", "Chennai"];
 
 export default function CalendarPage() {
+  const now = new Date();
   const [city, setCity] = useState("Ahmedabad");
+  const [year, setYear] = useState(2026);
+  const [month, setMonth] = useState(now.getMonth() + 1 >= 10 ? 10 : now.getMonth() + 1);
   const [days, setDays] = useState([]);
-  const [meta, setMeta] = useState(null);
   const [err, setErr] = useState("");
 
   useEffect(() => {
-    fetch(`${API}/v1/calendar?city=${encodeURIComponent(city)}`)
+    setErr("");
+    fetch(`${API}/v1/calendar?city=${encodeURIComponent(city)}&year=${year}&month=${month}`)
       .then((r) => r.json())
-      .then((d) => {
-        setDays(d.days || []);
-        setMeta(d);
-      })
+      .then((d) => setDays(d.days || []))
       .catch(() => setErr("Engine offline"));
-  }, [city]);
+  }, [city, year, month]);
+
+  const byDate = useMemo(() => {
+    const m = {};
+    for (const d of days) m[d.date] = d;
+    return m;
+  }, [days]);
+
+  const first = new Date(Date.UTC(year, month - 1, 1));
+  const startWeek = first.getUTCDay();
+  const lastDate = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const cells = [];
+  for (let i = 0; i < startWeek; i += 1) cells.push(null);
+  for (let d = 1; d <= lastDate; d += 1) {
+    const key = `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    cells.push({ d, key });
+  }
+
+  function shift(delta) {
+    const dt = new Date(year, month - 1 + delta, 1);
+    setYear(dt.getFullYear());
+    setMonth(dt.getMonth() + 1);
+  }
 
   return (
     <>
-      <h1>Month calendar</h1>
-      <select value={city} onChange={(e) => setCity(e.target.value)}>
-        {["Ahmedabad", "Ujjain", "Jaipur", "Mumbai", "Delhi"].map((c) => (
-          <option key={c}>{c}</option>
-        ))}
-      </select>
-      {meta && (
-        <p className="muted">
-          {meta.year}-{meta.month} · {meta.place?.name || city}
-        </p>
-      )}
+      <p className="eyebrow">Month</p>
+      <h1>Calendar</h1>
+      <p className="row">
+        <button type="button" onClick={() => shift(-1)}>
+          Prev
+        </button>
+        <strong>
+          {first.toLocaleString("en-IN", { month: "long", year: "numeric" })}
+        </strong>
+        <button type="button" onClick={() => shift(1)}>
+          Next
+        </button>
+        <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
+          {Array.from({ length: 12 }, (_, i) => (
+            <option key={i + 1} value={i + 1}>
+              {new Date(2026, i, 1).toLocaleString("en-IN", { month: "short" })}
+            </option>
+          ))}
+        </select>
+        <input type="number" value={year} onChange={(e) => setYear(Number(e.target.value))} style={{ width: 90 }} />
+        <select value={city} onChange={(e) => setCity(e.target.value)}>
+          {CITIES.map((c) => (
+            <option key={c}>{c}</option>
+          ))}
+        </select>
+      </p>
       {err && <p className="muted">{err}</p>}
-      {days.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Paksha</th>
-              <th>Tithi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {days.map((d) => (
-              <tr key={d.date}>
-                <td>{d.date}</td>
-                <td>{d.paksha}</td>
-                <td>
-                  {d.tithi_number} {tithiName(d.tithi_number, d.paksha)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <div className="cal">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((h) => (
+          <div className="cal-h" key={h}>
+            {h}
+          </div>
+        ))}
+        {cells.map((c, i) => {
+          if (!c) return <div className="cal-cell empty" key={`e${i}`} />;
+          const row = byDate[c.key];
+          const named = festivalsOn(c.key);
+          const vrats = row ? observances(row) : [];
+          return (
+            <div className="cal-cell" key={c.key}>
+              <strong>{c.d}</strong>
+              {row && (
+                <span className="muted">
+                  {row.paksha[0]} {tithiName(row.tithi_number, row.paksha)}
+                </span>
+              )}
+              {vrats.map((v) => (
+                <em key={v}>{v}</em>
+              ))}
+              {named.map((f) => (
+                <em key={f.name}>
+                  {f.name}
+                  {f.region ? ` · ${f.region}` : ""}
+                </em>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+      <p className="muted">
+        Tithi from our engine for the city. Named festivals are a 2026 overlay and can shift by one day.
+      </p>
     </>
   );
 }
