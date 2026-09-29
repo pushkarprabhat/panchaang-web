@@ -1,27 +1,36 @@
 @import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=Source+Sans+3:wght@400;600;700&display=swap");
 
 :root {
-  --bg: #f4ead8;
-  --card: #fffaf1;
-  --ink: #2a1c12;
-  --muted: #7a5c3a;
-  --line: #e0d0b4;
-  --accent: #9a3412;
-  --accent-ink: #fffaf1;
+  --bg: #fff4e0;
+  --card: #ffffff;
+  --ink: #1b0f08;
+  --muted: #8a3d12;
+  --line: #ffd089;
+  --accent: #e11d2e;
+  --accent-2: #f59e0b;
+  --peacock: #0f766e;
+  --accent-ink: #ffffff;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "Source Sans 3", system-ui, sans-serif; }
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+html, body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 400px at 10% -10%, #ffe08a 0%, transparent 50%),
+    radial-gradient(900px 360px at 100% 0%, #ffb4a2 0%, transparent 46%),
+    var(--bg);
+  color: var(--ink);
+  font: 16px/1.55 "Source Sans 3", system-ui, sans-serif;
+}
+a { color: var(--peacock); text-decoration: none; }
+a:hover { color: var(--accent); }
 .topbar {
   text-align: center;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--muted);
-  padding: 0.45rem 1rem;
-  border-bottom: 1px solid var(--line);
-  background: #efe3cc;
+  color: #fff8e7;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(90deg, #c2410c, #e11d2e 40%, #b45309);
 }
 .site-header, .site-footer, main { max-width: 1080px; margin: 0 auto; padding-left: 1.25rem; padding-right: 1.25rem; }
 .site-header {
@@ -32,60 +41,75 @@ a:hover { text-decoration: underline; }
   flex-wrap: wrap;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--line);
-  background: transparent;
+  border-bottom: 3px solid var(--accent-2);
 }
-.brand { font-family: "Source Serif 4", Georgia, serif; font-weight: 650; color: var(--ink); font-size: 1.35rem; letter-spacing: -0.02em; text-decoration: none; }
+.brand { font-family: "Source Serif 4", Georgia, serif; font-weight: 650; color: var(--ink); font-size: 1.4rem; letter-spacing: -0.02em; text-decoration: none; }
 .brand span { color: var(--accent); }
 nav { display: flex; gap: 0.85rem; align-items: center; font-size: 0.92rem; flex-wrap: wrap; }
-nav a { color: var(--ink); text-decoration: none; }
+nav a { color: var(--ink); text-decoration: none; font-weight: 600; }
 nav a:hover { color: var(--accent); }
 .nav-cta { padding: 0.35rem 0.75rem !important; text-decoration: none !important; }
 .lang-btn {
-  background: transparent;
-  color: var(--ink);
-  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--peacock);
+  border: 2px solid var(--peacock);
   padding: 0.3rem 0.55rem;
   font-size: 0.8rem;
 }
 main { padding-top: 1.8rem; padding-bottom: 3.5rem; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.25rem; box-shadow: 0 1px 0 rgba(42,28,18,0.04); }
-.featured { border-color: var(--accent); }
+.card {
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 8px 0 rgba(225, 29, 46, 0.08);
+}
+.featured { border-color: var(--accent); box-shadow: 0 8px 0 rgba(225, 29, 46, 0.18); }
 .grid { display: grid; gap: 1rem; }
 @media (min-width: 720px) {
   .grid.two { grid-template-columns: 1fr 1fr; }
   .grid.three { grid-template-columns: 1fr 1fr 1fr; }
 }
-h1 { font-family: "Source Serif 4", Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 0.5rem; line-height: 1.15; font-weight: 650; }
+h1 { font-family: "Source Serif 4", Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.7rem); margin: 0 0 0.5rem; line-height: 1.15; font-weight: 650; }
 h2 { font-family: "Source Serif 4", Georgia, serif; margin-top: 2rem; }
-.eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.72rem; color: var(--muted); margin: 0 0 0.45rem; }
-.lead { font-size: 1.12rem; color: var(--muted); max-width: 38rem; }
+.eyebrow { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; color: var(--accent); margin: 0 0 0.45rem; font-weight: 700; }
+.lead { font-size: 1.12rem; color: #6b2a0a; max-width: 38rem; }
 .row { display: flex; gap: 1rem; align-items: center; margin: 1rem 0 1.4rem; flex-wrap: wrap; }
 .muted { color: var(--muted); }
-.price { font-size: 1.6rem; font-weight: 700; margin: 0.3rem 0 0.8rem; }
-button, .btn { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px; padding: 0.6rem 1rem; font-weight: 600; cursor: pointer; display: inline-block; text-decoration: none; }
-button:hover, .btn:hover { filter: brightness(1.05); text-decoration: none; }
+.price { font-size: 1.6rem; font-weight: 700; margin: 0.3rem 0 0.8rem; color: var(--accent); }
+button, .btn {
+  background: linear-gradient(180deg, #fb7185, #e11d2e);
+  color: var(--accent-ink);
+  border: 0;
+  border-radius: 999px;
+  padding: 0.65rem 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+}
+button:hover, .btn:hover { filter: brightness(1.06); text-decoration: none; }
 ul { padding-left: 1.1rem; }
 table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
 td, th { border-bottom: 1px solid var(--line); padding: 0.45rem 0.3rem; text-align: left; }
-pre { background: #efe6d4; padding: 0.8rem; border-radius: 8px; overflow: auto; font-size: 0.8rem; }
-input, select { background: #fff; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 0.45rem 0.6rem; }
-.suggest { list-style: none; margin: 0.4rem 0 0; padding: 0; border: 1px solid var(--line); border-radius: 8px; max-height: 240px; overflow: auto; background: #fff; }
+pre { background: #fff7ed; padding: 0.8rem; border-radius: 8px; overflow: auto; font-size: 0.8rem; border: 1px dashed #fdba74; }
+input, select { background: #fff; color: var(--ink); border: 2px solid #fdba74; border-radius: 8px; padding: 0.45rem 0.6rem; }
+.suggest { list-style: none; margin: 0.4rem 0 0; padding: 0; border: 2px solid var(--line); border-radius: 8px; max-height: 240px; overflow: auto; background: #fff; }
 .suggest li { border-bottom: 1px solid var(--line); }
 .suggest-btn { width: 100%; text-align: left; background: transparent; color: var(--ink); border: 0; border-radius: 0; font-weight: 400; padding: 0.5rem 0.7rem; }
-.suggest-btn:hover { background: #f4ead8; }
+.suggest-btn:hover { background: #fff7ed; }
 .trust { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.8rem; margin: 1.5rem 0 0.4rem; }
-.trust div { border: 1px solid var(--line); border-radius: 10px; padding: 0.8rem 0.9rem; background: var(--card); }
-.trust strong { display: block; font-size: 0.95rem; }
-.panchang-hero { margin: 0.8rem 0 0.6rem; font-size: 1.2rem; font-family: "Source Serif 4", Georgia, serif; }
+.trust div { border: 2px solid var(--line); border-radius: 12px; padding: 0.8rem 0.9rem; background: #fff; }
+.trust strong { display: block; font-size: 0.95rem; color: var(--peacock); }
+.panchang-hero { margin: 0.8rem 0 0.6rem; font-size: 1.25rem; font-family: "Source Serif 4", Georgia, serif; color: #9f1239; }
 .panchang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem 1rem; margin: 0; }
 .panchang-grid dt { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
 .panchang-grid dd { margin: 0.1rem 0 0; }
-.site-footer { border-top: 1px solid var(--line); padding-top: 2rem; padding-bottom: 2rem; margin-top: 1rem; }
+.site-footer { border-top: 3px solid var(--accent-2); padding-top: 2rem; padding-bottom: 2rem; margin-top: 1rem; }
 .footer-grid { display: grid; gap: 1.4rem; }
 @media (min-width: 720px) {
   .footer-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
 }
 .footer-grid a { display: block; color: var(--ink); margin: 0.25rem 0; font-size: 0.92rem; }
-.footer-label { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem; color: var(--muted); margin: 0 0 0.5rem; }
+.footer-label { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem; color: var(--accent); margin: 0 0 0.5rem; }
 .footer-meta { margin-top: 1.6rem; font-size: 0.85rem; }
