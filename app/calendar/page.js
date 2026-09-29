@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
 
 export default function CalendarPage() {
   const [city, setCity] = useState("Ahmedabad");
