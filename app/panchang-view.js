@@ -60,15 +60,16 @@ export default function PanchangView({ data }) {
         <Row name="Nakshatra" value={nakshatraName(data.nakshatra_index)} />
         <Row name="Yoga" value={yogaName(data.yoga_index)} />
         <Row name="Karana" value={karanaName(data.karana_index)} />
+        <Row name="Saura masa" value={data.saura_masa_name || "—"} />
         <Row name="Vikrama" value={years.vikrama} />
         <Row name="Shaka" value={years.shaka} />
         <Row name="Sunrise" value={ist(data.sunrise)} />
         <Row name="Sunset" value={ist(data.sunset)} />
+        <Row name="Moonrise" value={data.moonrise ? ist(data.moonrise) : "Rebuild API"} />
+        <Row name="Moonset" value={data.moonset ? ist(data.moonset) : "Rebuild API"} />
         <Row name="Rahu Kalam" value={rahuKalam(data.sunrise, data.sunset)} />
         <Row name="Tithi starts" value={ist(data.tithi_start)} />
         <Row name="Tithi ends" value={ist(data.tithi_end)} />
-        <Row name="Moonrise" value="Not computed yet" />
-        <Row name="Lunar month" value="Not computed yet" />
         <Row name="System" value={data.month_system || "Amanta"} />
       </dl>
       {chog.length > 0 && (
@@ -76,11 +77,7 @@ export default function PanchangView({ data }) {
           <p className="eyebrow" style={{ marginTop: "1.2rem" }}>Day Choghadiya</p>
           <table>
             <thead>
-              <tr>
-                <th>Name</th>
-                <th>Window</th>
-                <th>Note</th>
-              </tr>
+              <tr><th>Name</th><th>Window</th><th>Note</th></tr>
             </thead>
             <tbody>
               {chog.map((c) => (
