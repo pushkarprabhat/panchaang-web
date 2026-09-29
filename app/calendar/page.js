@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { tithiName } from "../panchang-labels";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
 
@@ -11,10 +12,6 @@ export default function CalendarPage() {
   const [err, setErr] = useState("");
 
   useEffect(() => {
-    if (!API) {
-      setErr("Connect the engine API (NEXT_PUBLIC_API_URL) to fill this month.");
-      return;
-    }
     fetch(`${API}/v1/calendar?city=${encodeURIComponent(city)}`)
       .then((r) => r.json())
       .then((d) => {
@@ -43,16 +40,18 @@ export default function CalendarPage() {
           <thead>
             <tr>
               <th>Date</th>
-              <th>Tithi</th>
               <th>Paksha</th>
+              <th>Tithi</th>
             </tr>
           </thead>
           <tbody>
             {days.map((d) => (
               <tr key={d.date}>
                 <td>{d.date}</td>
-                <td>{d.tithi_number}</td>
                 <td>{d.paksha}</td>
+                <td>
+                  {d.tithi_number} {tithiName(d.tithi_number, d.paksha)}
+                </td>
               </tr>
             ))}
           </tbody>
