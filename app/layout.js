@@ -42,7 +42,7 @@ export default function RootLayout({ children }) {
               <p className="footer-label">Product</p>
               <Link href="/services">All services</Link>
               <Link href="/tools">Converters</Link>
-              <Link href="/festivals">Ekadashi list</Link>
+              <Link href="/festivals">Forthcoming</Link>
               <Link href="/compare">Two cities</Link>
               <Link href="/widget">Widget</Link>
               <Link href="/pricing">Pricing</Link>
@@ -59,7 +59,7 @@ export default function RootLayout({ children }) {
               <Link href="/legal/terms">Terms</Link>
               <Link href="/legal/privacy">Privacy</Link>
               <Link href="/legal/refund">Refund & cancellation</Link>
-              <a href="mailto:legal@theiaone-ai.com">legal@theiaone-ai.com</a>
+              <a href="mailto:legal@panchaang.in">legal@panchaang.in</a>
             </div>
           </div>
           <p className="footer-meta muted">
