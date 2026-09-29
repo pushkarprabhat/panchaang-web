@@ -1,0 +1,33 @@
+.cal {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 1rem;
+}
+.cal-h {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  color: #c2410c;
+}
+.cal-cell {
+  background: #fff;
+  border: 1px solid #ffd089;
+  border-radius: 10px;
+  min-height: 92px;
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.72rem;
+}
+.cal-cell.empty { background: transparent; border-color: transparent; }
+.cal-cell em {
+  font-style: normal;
+  color: #9f1239;
+  font-weight: 600;
+}
+@media (max-width: 720px) {
+  .cal { font-size: 0.65rem; }
+  .cal-cell { min-height: 72px; padding: 0.25rem; }
+}
