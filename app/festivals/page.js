@@ -12,7 +12,7 @@ const WATCH = [
   { label: "Amavasya", paksha: "Krishna", tithi: 15 },
   { label: "Shukla Ashtami", paksha: "Shukla", tithi: 8 },
   { label: "Krishna Ashtami", paksha: "Krishna", tithi: 8 },
-  { label: "Sankashti (Krishna Chaturthi)", paksha: "Krishna", tithi: 4 },
+  { label: "Sankashti Chaturthi (Ganesha)", paksha: "Krishna", tithi: 4 },
 ];
 
 export default function FestivalsPage() {
@@ -44,8 +44,8 @@ export default function FestivalsPage() {
       <p className="eyebrow">Look ahead</p>
       <h1>Forthcoming tithis</h1>
       <p className="lead">
-        Ekadashi, ashtami, Sankashti, purnima, amavasya — from the engine.
-        Named vrat titles (Vinayaka Chaturthi, Janmashtami) come after month names.
+        Ekadashi, ashtami, Sankashti Chaturthi (Ganesha), purnima, amavasya.
+        Moonrise for Sankashti comes later as its own field.
       </p>
       <p>
         <input value={city} onChange={(e) => setCity(e.target.value)} />{" "}
