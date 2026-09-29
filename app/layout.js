@@ -20,8 +20,8 @@ export default function RootLayout({ children }) {
             <Link href="/">Today</Link>
             <Link href="/calendar">Month</Link>
             <Link href="/festivals">Forthcoming</Link>
+            <Link href="/eclipses">Eclipses</Link>
             <Link href="/tools">Tools</Link>
-            <Link href="/pricing">Plans</Link>
             <LangToggle />
           </nav>
         </header>
@@ -41,8 +41,8 @@ export default function RootLayout({ children }) {
               <Link href="/">Today</Link>
               <Link href="/calendar">Month</Link>
               <Link href="/festivals">Forthcoming</Link>
+              <Link href="/eclipses">Eclipses</Link>
               <Link href="/tools">Converters</Link>
-              <Link href="/compare">Two cities</Link>
               <Link href="/widget">Widget</Link>
             </div>
             <div>
