@@ -8,6 +8,7 @@ import {
   varaName,
   yogaName,
 } from "./panchang-labels";
+import { choghadiyaDay } from "./choghadiya";
 
 function gregorianLine(iso) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -34,6 +35,7 @@ export default function PanchangView({ data }) {
   const when = data.sunrise || data.tithi_start;
   const years = samvatYears(when);
   const vrats = observances(data);
+  const chog = choghadiyaDay(data.sunrise, data.sunset);
   return (
     <div className="panchang-full">
       <p className="muted" style={{ margin: "0.5rem 0 0" }}>
@@ -54,9 +56,22 @@ export default function PanchangView({ data }) {
         <div><dt>Sunset</dt><dd>{ist(data.sunset)}</dd></div>
         <div><dt>Rahu Kalam</dt><dd>{rahuKalam(data.sunrise, data.sunset)}</dd></div>
         <div><dt>Tithi window</dt><dd>{ist(data.tithi_start)} – {ist(data.tithi_end)}</dd></div>
-        <div><dt>Moonrise</dt><dd>— (next)</dd></div>
-        <div><dt>System</dt><dd>{data.month_system || "Amanta"}</dd></div>
       </dl>
+      {chog.length > 0 && (
+        <>
+          <p className="eyebrow">Day Choghadiya</p>
+          <table>
+            <tbody>
+              {chog.map((c) => (
+                <tr key={c.start}>
+                  <td>{c.name}{c.good ? " · good" : ""}</td>
+                  <td>{c.start} – {c.end}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
     </div>
   );
 }
