@@ -13,6 +13,8 @@ export default function RootLayout({ children }) {
         <header>
           <Link href="/" className="brand">Panchaang.in</Link>
           <nav>
+            <Link href="/tools">Tools</Link>
+            <Link href="/calendar">Calendar</Link>
             <Link href="/features">Features</Link>
             <Link href="/pricing">Pricing</Link>
             <Link href="/temples">Temples</Link>
@@ -23,6 +25,8 @@ export default function RootLayout({ children }) {
         <main>{children}</main>
         <footer>
           <div>
+            <Link href="/tools">Tools</Link>
+            {" · "}
             <Link href="/pricing">Pricing</Link>
             {" · "}
             <Link href="/alerts">Alerts</Link>
