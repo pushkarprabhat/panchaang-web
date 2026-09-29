@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <div className="topbar">Own engine · Lahiri · Amanta default · Digital service</div>
+        <div className="topbar">A product of TheiaOne AI Systems LLP · Digital service</div>
         <header className="site-header">
           <Link href="/" className="brand">
             Panchaang<span>.in</span>
@@ -33,8 +33,9 @@ export default function RootLayout({ children }) {
             <div>
               <p className="brand">Panchaang.in</p>
               <p className="muted">
-                Digital panchang software. Operated from Ahmedabad, Gujarat.
-                Contact legal@theiaone-ai.com
+                TheiaOne AI Systems LLP (ADA-3003)
+                <br />
+                308, City Center - 2, Science City Road, Sola, Ahmedabad 380060
               </p>
             </div>
             <div>
@@ -62,7 +63,7 @@ export default function RootLayout({ children }) {
             </div>
           </div>
           <p className="footer-meta muted">
-            © {new Date().getFullYear()} Panchaang.in · Digital goods · No physical shipping
+            © {new Date().getFullYear()} TheiaOne AI Systems LLP · Panchaang.in · No physical shipping
           </p>
         </footer>
       </body>
