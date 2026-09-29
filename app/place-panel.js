@@ -19,7 +19,7 @@ function nearest(lat, lon) {
   return best;
 }
 
-export default function PlacePanel() {
+export default function PlacePanel({ compact }) {
   const [q, setQ] = useState("Ahmedabad");
   const [place, setPlace] = useState(PLACES[0]);
   const [open, setOpen] = useState(false);
@@ -75,10 +75,10 @@ export default function PlacePanel() {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         const near = nearest(lat, lon);
-        setLocNote(`Using your location (near ${near.name})`);
+        setLocNote(`Near ${near.name}`);
         loadCoords(lat, lon, near.name);
       },
-      () => setLocNote("Location off — Ahmedabad default")
+      () => setLocNote("Ahmedabad default")
     );
   }, []);
 
@@ -91,13 +91,11 @@ export default function PlacePanel() {
     load(p);
   }
 
-  const snippet = `<script src="https://panchaang.in/embed.js" data-city="${place.name}" data-api="https://api.panchaang.in"></script>`;
   const mapSrc = `https://maps.google.com/maps?q=${place.lat},${place.lon}&z=11&output=embed`;
 
   return (
-    <div className="grid two">
+    <div className={compact ? "" : "grid two"}>
       <div className="card">
-        <label className="muted">City or search</label>
         <input
           value={q}
           onChange={(e) => {
@@ -105,8 +103,8 @@ export default function PlacePanel() {
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder="Ahmedabad, London, Dubai…"
-          style={{ width: "100%", marginTop: 6 }}
+          placeholder="City"
+          style={{ width: "100%" }}
         />
         {locNote && <p className="muted">{locNote}</p>}
         {open && (
@@ -122,33 +120,15 @@ export default function PlacePanel() {
                 </button>
               </li>
             ))}
-            {hits.length === 0 && <li className="muted">No match. Use Tools for raw lat/long.</li>}
           </ul>
         )}
-        <p style={{ marginTop: "1rem" }}>
-          <strong>
-            {place.name}{place.admin ? `, ${place.admin}` : ""}
-          </strong>
-          <br />
-          <span className="muted">
-            {place.country} · {Number(place.lat).toFixed(4)}, {Number(place.lon).toFixed(4)}
-          </span>
-        </p>
-        {data ? <PanchangView data={data} /> : <p className="muted">{err || "Loading panchang…"}</p>}
-        <h3>Widget</h3>
-        <pre>{snippet}</pre>
+        {data ? <PanchangView data={data} /> : <p className="muted">{err || "Loading…"}</p>}
       </div>
-      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-        <iframe
-          title="map"
-          src={mapSrc}
-          width="100%"
-          height="360"
-          style={{ border: 0, display: "block" }}
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-      </div>
+      {!compact && (
+        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+          <iframe title="map" src={mapSrc} width="100%" height="360" style={{ border: 0, display: "block" }} loading="lazy" />
+        </div>
+      )}
     </div>
   );
 }
