@@ -1,13 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=Source+Sans+3:wght@400;600;700&display=swap");
 
 :root {
-  --bg: #120e0a;
-  --card: #1e1610;
-  --ink: #f7ecdc;
-  --muted: #c4a882;
-  --line: #3d2d22;
-  --accent: #e4b36a;
-  --accent-ink: #1a120c;
+  --bg: #f4ead8;
+  --card: #fffaf1;
+  --ink: #2a1c12;
+  --muted: #7a5c3a;
+  --line: #e0d0b4;
+  --accent: #9a3412;
+  --accent-ink: #fffaf1;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "Source Sans 3", system-ui, sans-serif; }
@@ -21,7 +21,7 @@ a:hover { text-decoration: underline; }
   color: var(--muted);
   padding: 0.45rem 1rem;
   border-bottom: 1px solid var(--line);
-  background: #0c0907;
+  background: #efe3cc;
 }
 .site-header, .site-footer, main { max-width: 1080px; margin: 0 auto; padding-left: 1.25rem; padding-right: 1.25rem; }
 .site-header {
@@ -33,6 +33,7 @@ a:hover { text-decoration: underline; }
   padding-top: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--line);
+  background: transparent;
 }
 .brand { font-family: "Source Serif 4", Georgia, serif; font-weight: 650; color: var(--ink); font-size: 1.35rem; letter-spacing: -0.02em; text-decoration: none; }
 .brand span { color: var(--accent); }
@@ -40,8 +41,15 @@ nav { display: flex; gap: 0.85rem; align-items: center; font-size: 0.92rem; flex
 nav a { color: var(--ink); text-decoration: none; }
 nav a:hover { color: var(--accent); }
 .nav-cta { padding: 0.35rem 0.75rem !important; text-decoration: none !important; }
+.lang-btn {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  padding: 0.3rem 0.55rem;
+  font-size: 0.8rem;
+}
 main { padding-top: 1.8rem; padding-bottom: 3.5rem; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.25rem; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.25rem; box-shadow: 0 1px 0 rgba(42,28,18,0.04); }
 .featured { border-color: var(--accent); }
 .grid { display: grid; gap: 1rem; }
 @media (min-width: 720px) {
@@ -60,14 +68,14 @@ button:hover, .btn:hover { filter: brightness(1.05); text-decoration: none; }
 ul { padding-left: 1.1rem; }
 table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
 td, th { border-bottom: 1px solid var(--line); padding: 0.45rem 0.3rem; text-align: left; }
-pre { background: #0e0a07; padding: 0.8rem; border-radius: 8px; overflow: auto; font-size: 0.8rem; }
-input, select { background: #0e0a07; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 0.45rem 0.6rem; }
-.suggest { list-style: none; margin: 0.4rem 0 0; padding: 0; border: 1px solid var(--line); border-radius: 8px; max-height: 240px; overflow: auto; background: #0e0a07; }
+pre { background: #efe6d4; padding: 0.8rem; border-radius: 8px; overflow: auto; font-size: 0.8rem; }
+input, select { background: #fff; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 0.45rem 0.6rem; }
+.suggest { list-style: none; margin: 0.4rem 0 0; padding: 0; border: 1px solid var(--line); border-radius: 8px; max-height: 240px; overflow: auto; background: #fff; }
 .suggest li { border-bottom: 1px solid var(--line); }
 .suggest-btn { width: 100%; text-align: left; background: transparent; color: var(--ink); border: 0; border-radius: 0; font-weight: 400; padding: 0.5rem 0.7rem; }
-.suggest-btn:hover { background: #2a1d14; }
+.suggest-btn:hover { background: #f4ead8; }
 .trust { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.8rem; margin: 1.5rem 0 0.4rem; }
-.trust div { border: 1px solid var(--line); border-radius: 10px; padding: 0.8rem 0.9rem; }
+.trust div { border: 1px solid var(--line); border-radius: 10px; padding: 0.8rem 0.9rem; background: var(--card); }
 .trust strong { display: block; font-size: 0.95rem; }
 .panchang-hero { margin: 0.8rem 0 0.6rem; font-size: 1.2rem; font-family: "Source Serif 4", Georgia, serif; }
 .panchang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem 1rem; margin: 0; }
