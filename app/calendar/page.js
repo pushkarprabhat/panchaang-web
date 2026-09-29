@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { observances, tithiName } from "../panchang-labels";
 import { festivalsOn } from "../../data/festivals-2026";
+import "./calendar.css";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
 const CITIES = ["Ahmedabad", "Ujjain", "Jaipur", "Mumbai", "Delhi", "Varanasi", "Kolkata", "Chennai"];
@@ -50,15 +51,9 @@ export default function CalendarPage() {
       <p className="eyebrow">Month</p>
       <h1>Calendar</h1>
       <p className="row">
-        <button type="button" onClick={() => shift(-1)}>
-          Prev
-        </button>
-        <strong>
-          {first.toLocaleString("en-IN", { month: "long", year: "numeric" })}
-        </strong>
-        <button type="button" onClick={() => shift(1)}>
-          Next
-        </button>
+        <button type="button" onClick={() => shift(-1)}>Prev</button>
+        <strong>{first.toLocaleString("en-IN", { month: "long", year: "numeric" })}</strong>
+        <button type="button" onClick={() => shift(1)}>Next</button>
         <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i + 1} value={i + 1}>
@@ -76,9 +71,7 @@ export default function CalendarPage() {
       {err && <p className="muted">{err}</p>}
       <div className="cal">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((h) => (
-          <div className="cal-h" key={h}>
-            {h}
-          </div>
+          <div className="cal-h" key={h}>{h}</div>
         ))}
         {cells.map((c, i) => {
           if (!c) return <div className="cal-cell empty" key={`e${i}`} />;
@@ -97,18 +90,13 @@ export default function CalendarPage() {
                 <em key={v}>{v}</em>
               ))}
               {named.map((f) => (
-                <em key={f.name}>
-                  {f.name}
-                  {f.region ? ` · ${f.region}` : ""}
-                </em>
+                <em key={f.name}>{f.name}{f.region ? ` · ${f.region}` : ""}</em>
               ))}
             </div>
           );
         })}
       </div>
-      <p className="muted">
-        Tithi from our engine for the city. Named festivals are a 2026 overlay and can shift by one day.
-      </p>
+      <p className="muted">Tithi from our engine. Named festivals are a 2026 overlay and can shift by one day.</p>
     </>
   );
 }
