@@ -96,6 +96,16 @@ const SPECIAL_KARANA = {
   60: "Kimstughna",
 };
 
+export const VARA = [
+  "Ravivar",
+  "Somvar",
+  "Mangalvar",
+  "Budhvar",
+  "Guruvar",
+  "Shukravar",
+  "Shanivar",
+];
+
 export function tithiName(n, paksha) {
   if (n === 15) return paksha === "Krishna" ? "Amavasya" : "Purnima";
   return TITHI[n] || `Tithi ${n}`;
@@ -115,10 +125,20 @@ export function karanaName(i) {
   return KARANA[i % 7];
 }
 
+export function varaName(iso) {
+  const d = new Date(iso || Date.now());
+  const day = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Kolkata",
+    weekday: "short",
+  }).format(d);
+  const map = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  return VARA[map[day]] || day;
+}
+
 export function ist(iso) {
-  if (!iso) return "—";
+  if (!iso) return "\u2014";
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "\u2014";
   return new Intl.DateTimeFormat("en-IN", {
     timeZone: "Asia/Kolkata",
     day: "2-digit",
