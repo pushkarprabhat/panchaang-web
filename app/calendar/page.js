@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { observances, tithiName } from "../panchang-labels";
 import { festivalsOn } from "../../data/festivals-2026";
+import { eclipsesOn } from "../../data/eclipses";
 import "./calendar.css";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
@@ -77,6 +78,7 @@ export default function CalendarPage() {
           if (!c) return <div className="cal-cell empty" key={`e${i}`} />;
           const row = byDate[c.key];
           const named = festivalsOn(c.key);
+          const ecl = eclipsesOn(c.key);
           const vrats = row ? observances(row) : [];
           return (
             <div className="cal-cell" key={c.key}>
@@ -90,13 +92,16 @@ export default function CalendarPage() {
                 <em key={v}>{v}</em>
               ))}
               {named.map((f) => (
-                <em key={f.name}>{f.name}{f.region ? ` · ${f.region}` : ""}</em>
+                <em key={f.name}>{f.name}</em>
+              ))}
+              {ecl.map((e) => (
+                <em key={e.kind}>{e.type} {e.kind} eclipse</em>
               ))}
             </div>
           );
         })}
       </div>
-      <p className="muted">Tithi from our engine. Named festivals are a 2026 overlay and can shift by one day.</p>
+      <p className="muted">Tithi from the engine. Eclipses are NASA civil dates, not a city visibility map.</p>
     </>
   );
 }
