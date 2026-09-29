@@ -29,6 +29,15 @@ function samvatYears(iso) {
   return { vikrama: y + 57, shaka: y - 78 };
 }
 
+function Row({ name, value }) {
+  return (
+    <div>
+      <dt>{name}</dt>
+      <dd>{value}</dd>
+    </div>
+  );
+}
+
 export default function PanchangView({ data }) {
   if (!data) return null;
   const tithi = tithiName(data.tithi_number, data.paksha);
@@ -38,34 +47,47 @@ export default function PanchangView({ data }) {
   const chog = choghadiyaDay(data.sunrise, data.sunset);
   return (
     <div className="panchang-full">
-      <p className="muted" style={{ margin: "0.5rem 0 0" }}>
+      <p className="muted" style={{ margin: "0.6rem 0 0" }}>
         {gregorianLine(when)}
       </p>
       <p className="panchang-hero">
         {data.paksha} {tithi}
       </p>
       {vrats.length > 0 && <p className="eyebrow">{vrats.join(" · ")}</p>}
-      <dl className="panchang-grid">
-        <div><dt>Tithi</dt><dd>{tithi} ({data.paksha})</dd></div>
-        <div><dt>Vara</dt><dd>{varaName(when)}</dd></div>
-        <div><dt>Nakshatra</dt><dd>{nakshatraName(data.nakshatra_index)}</dd></div>
-        <div><dt>Yoga</dt><dd>{yogaName(data.yoga_index)}</dd></div>
-        <div><dt>Karana</dt><dd>{karanaName(data.karana_index)}</dd></div>
-        <div><dt>Vikrama / Shaka</dt><dd>{years.vikrama} / {years.shaka}</dd></div>
-        <div><dt>Sunrise</dt><dd>{ist(data.sunrise)}</dd></div>
-        <div><dt>Sunset</dt><dd>{ist(data.sunset)}</dd></div>
-        <div><dt>Rahu Kalam</dt><dd>{rahuKalam(data.sunrise, data.sunset)}</dd></div>
-        <div><dt>Tithi window</dt><dd>{ist(data.tithi_start)} – {ist(data.tithi_end)}</dd></div>
+      <dl className="kv">
+        <Row name="Tithi" value={`${tithi} (${data.paksha})`} />
+        <Row name="Vara" value={varaName(when)} />
+        <Row name="Nakshatra" value={nakshatraName(data.nakshatra_index)} />
+        <Row name="Yoga" value={yogaName(data.yoga_index)} />
+        <Row name="Karana" value={karanaName(data.karana_index)} />
+        <Row name="Vikrama" value={years.vikrama} />
+        <Row name="Shaka" value={years.shaka} />
+        <Row name="Sunrise" value={ist(data.sunrise)} />
+        <Row name="Sunset" value={ist(data.sunset)} />
+        <Row name="Rahu Kalam" value={rahuKalam(data.sunrise, data.sunset)} />
+        <Row name="Tithi starts" value={ist(data.tithi_start)} />
+        <Row name="Tithi ends" value={ist(data.tithi_end)} />
+        <Row name="Moonrise" value="Not computed yet" />
+        <Row name="Lunar month" value="Not computed yet" />
+        <Row name="System" value={data.month_system || "Amanta"} />
       </dl>
       {chog.length > 0 && (
         <>
-          <p className="eyebrow">Day Choghadiya</p>
+          <p className="eyebrow" style={{ marginTop: "1.2rem" }}>Day Choghadiya</p>
           <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Window</th>
+                <th>Note</th>
+              </tr>
+            </thead>
             <tbody>
               {chog.map((c) => (
                 <tr key={c.start}>
-                  <td>{c.name}{c.good ? " · good" : ""}</td>
+                  <td>{c.name}</td>
                   <td>{c.start} – {c.end}</td>
+                  <td className="muted">{c.good ? "Favourable" : "—"}</td>
                 </tr>
               ))}
             </tbody>
