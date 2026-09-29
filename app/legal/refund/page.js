@@ -7,7 +7,7 @@ export default function RefundPage() {
         <li>You may cancel auto-renew any time. Access stays till the paid period ends.</li>
         <li>If checkout fails or you are charged twice, we refund the extra payment in 5–7 working days to the original method.</li>
         <li>No refund because you disagree with a tithi after the period has started, except where Indian law requires it.</li>
-        <li>Write to legal@theiaone-ai.com with the payment id.</li>
+        <li>Write to legal@panchaang.in with the payment id.</li>
       </ul>
       <p className="muted">This policy will be the same URL submitted to Razorpay.</p>
     </>
