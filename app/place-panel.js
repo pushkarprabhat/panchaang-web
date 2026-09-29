@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PLACES } from "../data/places";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
@@ -23,11 +23,7 @@ export default function PlacePanel() {
     ).slice(0, 12);
   }, [q]);
 
-  function pick(p) {
-    setPlace(p);
-    setQ(p.name);
-    setOpen(false);
-    setData(null);
+  function load(p) {
     setErr("");
     fetch(
       `${API}/v1/panchang?city=${encodeURIComponent(p.name)}&latitude=${p.lat}&longitude=${p.lon}`
@@ -35,6 +31,18 @@ export default function PlacePanel() {
       .then((r) => r.json())
       .then(setData)
       .catch(() => setErr("Engine offline"));
+  }
+
+  useEffect(() => {
+    load(PLACES[0]);
+  }, []);
+
+  function pick(p) {
+    setPlace(p);
+    setQ(p.name);
+    setOpen(false);
+    setData(null);
+    load(p);
   }
 
   const snippet = `<script src="https://panchaang.in/embed.js" data-city="${place.name}" data-api="https://api.panchaang.in"></script>`;
@@ -84,7 +92,7 @@ export default function PlacePanel() {
             Tithi {data.tithi_number} {data.paksha}
           </p>
         ) : (
-          <p className="muted">{err || "Pick a city."}</p>
+          <p className="muted">{err || "Loading tithi…"}</p>
         )}
         <h3>Widget for this place</h3>
         <pre>{snippet}</pre>
