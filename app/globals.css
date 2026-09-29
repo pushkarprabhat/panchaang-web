@@ -40,3 +40,7 @@ input, select { background: #0e0a07; color: var(--ink); border: 1px solid var(--
 .suggest-btn { width: 100%; text-align: left; background: transparent; color: var(--ink); border: 0; border-radius: 0; font-weight: 400; padding: 0.5rem 0.7rem; }
 .suggest-btn:hover { background: #2a1d14; }
 footer { border-top: 1px solid var(--line); font-size: 0.9rem; }
+.panchang-hero { margin: 0.8rem 0 0.6rem; font-size: 1.15rem; }
+.panchang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem 1rem; margin: 0; }
+.panchang-grid dt { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.panchang-grid dd { margin: 0.1rem 0 0; }
