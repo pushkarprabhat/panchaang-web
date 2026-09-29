@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import PanchangView from "../panchang-view";
+import { ist } from "../panchang-labels";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
 
@@ -20,8 +22,15 @@ const MONTHS = [
   [12, "Phalguna"],
 ];
 
+function toRfc(dateStr) {
+  return `${dateStr}T06:30:00+05:30`;
+}
+
 export default function ToolsPage() {
   const [city, setCity] = useState("Ahmedabad");
+  const [lat, setLat] = useState("");
+  const [lon, setLon] = useState("");
+  const [system, setSystem] = useState("amanta");
   const [gDate, setGDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [forward, setForward] = useState(null);
   const [ferr, setFerr] = useState("");
@@ -38,8 +47,11 @@ export default function ToolsPage() {
   const [tithiN, setTithiN] = useState(11);
   const [next, setNext] = useState(null);
 
-  function toRfc(dateStr) {
-    return `${dateStr}T06:30:00+05:30`;
+  const [ce, setCe] = useState(2026);
+
+  function placeQuery() {
+    if (lat && lon) return `latitude=${lat}&longitude=${lon}`;
+    return `city=${encodeURIComponent(city)}`;
   }
 
   function runForward(e) {
@@ -47,7 +59,7 @@ export default function ToolsPage() {
     setFerr("");
     setForward(null);
     fetch(
-      `${API}/v1/panchang?city=${encodeURIComponent(city)}&date_time=${encodeURIComponent(toRfc(gDate))}`
+      `${API}/v1/panchang?${placeQuery()}&month_system=${system}&date_time=${encodeURIComponent(toRfc(gDate))}`
     )
       .then((r) => r.json())
       .then(setForward)
@@ -59,33 +71,32 @@ export default function ToolsPage() {
     setRerr("");
     setRev(null);
     const q = new URLSearchParams({
-      city,
       samvat_year: String(samvat),
       era,
       lunar_month: String(lmonth),
       paksha,
       tithi: String(tithi),
+      month_system: system,
     });
+    if (lat && lon) {
+      q.set("latitude", lat);
+      q.set("longitude", lon);
+    } else {
+      q.set("city", city);
+    }
     fetch(`${API}/v1/to-gregorian?${q}`)
       .then(async (r) => {
         const d = await r.json();
-        if (!r.ok) throw new Error(d.message || d.error || r.statusText);
+        if (!r.ok) throw new Error(d.message || JSON.stringify(d));
         setRev(d);
       })
-      .catch((err) => {
-        const y = era === "shaka" ? samvat + 78 : samvat - 57;
-        setRerr(
-          `${err.message}. Year-only estimate: Vikrama ${era === "vikrama" ? samvat : samvat + 135} ≈ ${y} CE. Full tithi search needs the new API on the server.`
-        );
-      });
+      .catch((err) => setRerr(String(err.message || err)));
   }
 
   function runNext(e) {
     e.preventDefault();
     setNext(null);
-    fetch(
-      `${API}/v1/next-tithi?city=${encodeURIComponent(city)}&paksha=${pakshaN}&tithi=${tithiN}&days=60`
-    )
+    fetch(`${API}/v1/next-tithi?${placeQuery()}&paksha=${pakshaN}&tithi=${tithiN}&days=90`)
       .then((r) => r.json())
       .then(setNext)
       .catch(() => setNext({ error: "offline" }));
@@ -94,58 +105,75 @@ export default function ToolsPage() {
   return (
     <>
       <p className="eyebrow">Utilities</p>
-      <h1>Convert dates</h1>
+      <h1>Converters and lookups</h1>
       <p className="lead">
-        Gregorian ↔ Hindu panchang for a city. Vikrama ≈ CE + 57. Shaka ≈ CE − 78.
-        Exact civil day also needs tithi + paksha + month.
+        Both directions. City name or raw lat/long. Also{" "}
+        <Link href="/compare">compare two cities</Link> and{" "}
+        <Link href="/festivals">upcoming ekadashi / purnima</Link>.
       </p>
 
-      <h2>Gregorian → panchang</h2>
-      <form className="card" onSubmit={runForward}>
+      <p className="muted">Place used by the tools below</p>
+      <div className="card" style={{ marginBottom: "1.2rem" }}>
         <p>
           <label className="muted">City</label>
           <br />
           <input value={city} onChange={(e) => setCity(e.target.value)} />
         </p>
         <p>
-          <label className="muted">Gregorian date</label>
+          <label className="muted">Or lat, long</label>
+          <br />
+          <input
+            placeholder="23.02"
+            value={lat}
+            onChange={(e) => setLat(e.target.value)}
+            style={{ width: 120 }}
+          />{" "}
+          <input
+            placeholder="72.57"
+            value={lon}
+            onChange={(e) => setLon(e.target.value)}
+            style={{ width: 120 }}
+          />
+        </p>
+        <p>
+          <label className="muted">Month system</label>
+          <br />
+          <select value={system} onChange={(e) => setSystem(e.target.value)}>
+            <option value="amanta">Amanta (Gujarat / South)</option>
+            <option value="purnimanta">Purnimanta (North print)</option>
+          </select>
+        </p>
+      </div>
+
+      <h2>Gregorian → five limbs</h2>
+      <form className="card" onSubmit={runForward}>
+        <p>
+          <label className="muted">Civil date</label>
           <br />
           <input type="date" value={gDate} onChange={(e) => setGDate(e.target.value)} />
         </p>
-        <button type="submit">Show five limbs</button>
+        <button type="submit">Calculate</button>
         {ferr && <p className="muted">{ferr}</p>}
         {forward && <PanchangView data={forward} />}
       </form>
 
-      <h2>Samvat + tithi → Gregorian</h2>
+      <h2>Samvat + tithi → civil date</h2>
       <form className="card" onSubmit={runReverse}>
         <p>
-          <label className="muted">Era</label>
-          <br />
           <select value={era} onChange={(e) => setEra(e.target.value)}>
             <option value="vikrama">Vikrama</option>
             <option value="shaka">Shaka</option>
-          </select>
-        </p>
-        <p>
-          <label className="muted">Samvat year</label>
-          <br />
+          </select>{" "}
           <input type="number" value={samvat} onChange={(e) => setSamvat(Number(e.target.value))} />
         </p>
         <p>
-          <label className="muted">Lunar month</label>
-          <br />
           <select value={lmonth} onChange={(e) => setLmonth(Number(e.target.value))}>
             {MONTHS.map(([n, name]) => (
               <option key={n} value={n}>
                 {n}. {name}
               </option>
             ))}
-          </select>
-        </p>
-        <p>
-          <label className="muted">Paksha / tithi</label>
-          <br />
+          </select>{" "}
           <select value={paksha} onChange={(e) => setPaksha(e.target.value)}>
             <option>Shukla</option>
             <option>Krishna</option>
@@ -159,14 +187,32 @@ export default function ToolsPage() {
             style={{ width: 80 }}
           />
         </p>
-        <button type="submit">Find civil date</button>
+        <button type="submit">Find sunrise</button>
+        <p className="muted">May return more than one date until month names are locked in the engine.</p>
         {rerr && <p className="muted">{rerr}</p>}
         {rev && (
-          <pre>{JSON.stringify(rev, null, 2)}</pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Sunrise (IST)</th>
+                <th>Tithi start</th>
+                <th>Tithi end</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(rev.matches || []).map((m) => (
+                <tr key={m.sunrise_at_tithi}>
+                  <td>{ist(m.sunrise_at_tithi)}</td>
+                  <td>{ist(m.date_time_start)}</td>
+                  <td>{ist(m.date_time_end)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </form>
 
-      <h2>Next tithi (alert helper)</h2>
+      <h2>Next occurrence</h2>
       <form className="card" onSubmit={runNext}>
         <p>
           <select value={pakshaN} onChange={(e) => setPakshaN(e.target.value)}>
@@ -183,9 +229,32 @@ export default function ToolsPage() {
             style={{ width: 80 }}
           />
         </p>
-        <button type="submit">Find next 60 days</button>
-        {next && <pre>{JSON.stringify(next, null, 2)}</pre>}
+        <button type="submit">Next 90 days</button>
+        {next?.hits && (
+          <ul>
+            {next.hits.map((h) => (
+              <li key={h.date}>
+                {h.date} — {h.paksha} {h.tithi_number}
+              </li>
+            ))}
+          </ul>
+        )}
+        {next?.error && <p className="muted">Engine offline</p>}
       </form>
+
+      <h2>Year numbers only</h2>
+      <div className="card">
+        <p>
+          Gregorian{" "}
+          <input type="number" value={ce} onChange={(e) => setCe(Number(e.target.value))} style={{ width: 100 }} />
+        </p>
+        <p>
+          Vikrama ≈ <strong>{ce + 57}</strong> · Shaka ≈ <strong>{ce - 78}</strong>
+        </p>
+        <p className="muted">
+          Year labels only. New Year day is not 1 January. Use the converters above for a tithi.
+        </p>
+      </div>
     </>
   );
 }
