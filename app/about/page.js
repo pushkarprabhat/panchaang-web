@@ -15,9 +15,9 @@ export default function AboutPage() {
         temple trust, travel agent, or SanatanSevaSetu.
       </p>
       <p>
-        DPIIT-recognised startup. Product email:{" "}
-        <a href="mailto:contact@theiaone-ai.com">contact@theiaone-ai.com</a>.
-        Legal: <a href="mailto:legal@theiaone-ai.com">legal@theiaone-ai.com</a>.
+        Product: <a href="mailto:contact@panchaang.in">contact@panchaang.in</a>
+        <br />
+        Legal: <a href="mailto:legal@panchaang.in">legal@panchaang.in</a>
       </p>
     </>
   );
