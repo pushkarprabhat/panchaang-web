@@ -2,31 +2,30 @@ import {
   ist,
   karanaName,
   nakshatraName,
+  observances,
+  rahuKalam,
   tithiName,
   varaName,
   yogaName,
 } from "./panchang-labels";
 
 function gregorianLine(iso) {
-  const d = new Date(iso || Date.now());
-  const date = new Intl.DateTimeFormat("en-IN", {
+  return new Intl.DateTimeFormat("en-IN", {
     timeZone: "Asia/Kolkata",
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
-  }).format(d);
-  return date;
+  }).format(new Date(iso || Date.now()));
 }
 
 function samvatYears(iso) {
   const y = Number(
-    new Intl.DateTimeFormat("en-IN", {
-      timeZone: "Asia/Kolkata",
-      year: "numeric",
-    }).format(new Date(iso || Date.now()))
+    new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", year: "numeric" }).format(
+      new Date(iso || Date.now())
+    )
   );
-  return { vikrama: y + 57, shaka: y - 78, ce: y };
+  return { vikrama: y + 57, shaka: y - 78 };
 }
 
 export default function PanchangView({ data }) {
@@ -34,69 +33,29 @@ export default function PanchangView({ data }) {
   const tithi = tithiName(data.tithi_number, data.paksha);
   const when = data.sunrise || data.tithi_start;
   const years = samvatYears(when);
+  const vrats = observances(data);
   return (
     <div className="panchang-full">
-      <p className="muted" style={{ margin: "0.6rem 0 0.2rem" }}>
+      <p className="muted" style={{ margin: "0.5rem 0 0" }}>
         {gregorianLine(when)}
       </p>
-      <p className="eyebrow">Five limbs</p>
       <p className="panchang-hero">
-        <strong>
-          {data.paksha} {tithi}
-        </strong>
-        <span className="muted"> · Tithi {data.tithi_number}</span>
+        {data.paksha} {tithi}
       </p>
+      {vrats.length > 0 && <p className="eyebrow">{vrats.join(" · ")}</p>}
       <dl className="panchang-grid">
-        <div>
-          <dt>1. Tithi</dt>
-          <dd>
-            {tithi} ({data.paksha})
-          </dd>
-        </div>
-        <div>
-          <dt>2. Vara</dt>
-          <dd>{varaName(when)}</dd>
-        </div>
-        <div>
-          <dt>3. Nakshatra</dt>
-          <dd>{nakshatraName(data.nakshatra_index)}</dd>
-        </div>
-        <div>
-          <dt>4. Yoga</dt>
-          <dd>{yogaName(data.yoga_index)}</dd>
-        </div>
-        <div>
-          <dt>5. Karana</dt>
-          <dd>{karanaName(data.karana_index)}</dd>
-        </div>
-        <div>
-          <dt>Vikrama</dt>
-          <dd>{years.vikrama}</dd>
-        </div>
-        <div>
-          <dt>Shaka</dt>
-          <dd>{years.shaka}</dd>
-        </div>
-        <div>
-          <dt>Month system</dt>
-          <dd>{data.month_system || "Amanta"}</dd>
-        </div>
-        <div>
-          <dt>Sunrise (IST)</dt>
-          <dd>{ist(data.sunrise)}</dd>
-        </div>
-        <div>
-          <dt>Sunset (IST)</dt>
-          <dd>{ist(data.sunset)}</dd>
-        </div>
-        <div>
-          <dt>Tithi starts</dt>
-          <dd>{ist(data.tithi_start)}</dd>
-        </div>
-        <div>
-          <dt>Tithi ends</dt>
-          <dd>{ist(data.tithi_end)}</dd>
-        </div>
+        <div><dt>Tithi</dt><dd>{tithi} ({data.paksha})</dd></div>
+        <div><dt>Vara</dt><dd>{varaName(when)}</dd></div>
+        <div><dt>Nakshatra</dt><dd>{nakshatraName(data.nakshatra_index)}</dd></div>
+        <div><dt>Yoga</dt><dd>{yogaName(data.yoga_index)}</dd></div>
+        <div><dt>Karana</dt><dd>{karanaName(data.karana_index)}</dd></div>
+        <div><dt>Vikrama / Shaka</dt><dd>{years.vikrama} / {years.shaka}</dd></div>
+        <div><dt>Sunrise</dt><dd>{ist(data.sunrise)}</dd></div>
+        <div><dt>Sunset</dt><dd>{ist(data.sunset)}</dd></div>
+        <div><dt>Rahu Kalam</dt><dd>{rahuKalam(data.sunrise, data.sunset)}</dd></div>
+        <div><dt>Tithi window</dt><dd>{ist(data.tithi_start)} – {ist(data.tithi_end)}</dd></div>
+        <div><dt>Moonrise</dt><dd>— (next)</dd></div>
+        <div><dt>System</dt><dd>{data.month_system || "Amanta"}</dd></div>
       </dl>
     </div>
   );
