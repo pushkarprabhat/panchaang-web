@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PanchangView from "./panchang-view";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
 
@@ -10,10 +11,6 @@ export default function TodayBox() {
   const [err, setErr] = useState("");
 
   useEffect(() => {
-    if (!API) {
-      setErr("API not connected yet. Calendar UI is live.");
-      return;
-    }
     fetch(`${API}/v1/panchang?city=${encodeURIComponent(city)}`)
       .then((r) => r.json())
       .then(setData)
@@ -30,16 +27,7 @@ export default function TodayBox() {
           ))}
         </select>
       </div>
-      {data ? (
-        <>
-          <strong>
-            Tithi {data.tithi_number} {data.paksha}
-          </strong>
-          <p className="muted">{data.place?.name || city}</p>
-        </>
-      ) : (
-        <p className="muted">{err || "Loading…"}</p>
-      )}
+      {data ? <PanchangView data={data} /> : <p className="muted">{err || "Loading…"}</p>}
     </div>
   );
 }
