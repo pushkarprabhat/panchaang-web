@@ -7,12 +7,38 @@ import {
   yogaName,
 } from "./panchang-labels";
 
+function gregorianLine(iso) {
+  const d = new Date(iso || Date.now());
+  const date = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(d);
+  return date;
+}
+
+function samvatYears(iso) {
+  const y = Number(
+    new Intl.DateTimeFormat("en-IN", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+    }).format(new Date(iso || Date.now()))
+  );
+  return { vikrama: y + 57, shaka: y - 78, ce: y };
+}
+
 export default function PanchangView({ data }) {
   if (!data) return null;
   const tithi = tithiName(data.tithi_number, data.paksha);
   const when = data.sunrise || data.tithi_start;
+  const years = samvatYears(when);
   return (
     <div className="panchang-full">
+      <p className="muted" style={{ margin: "0.6rem 0 0.2rem" }}>
+        {gregorianLine(when)}
+      </p>
       <p className="eyebrow">Five limbs</p>
       <p className="panchang-hero">
         <strong>
@@ -42,6 +68,14 @@ export default function PanchangView({ data }) {
         <div>
           <dt>5. Karana</dt>
           <dd>{karanaName(data.karana_index)}</dd>
+        </div>
+        <div>
+          <dt>Vikrama</dt>
+          <dd>{years.vikrama}</dd>
+        </div>
+        <div>
+          <dt>Shaka</dt>
+          <dd>{years.shaka}</dd>
         </div>
         <div>
           <dt>Month system</dt>
