@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { PLACES } from "../data/places";
+import PanchangView from "./panchang-view";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
 
@@ -88,11 +89,9 @@ export default function PlacePanel() {
           </span>
         </p>
         {data ? (
-          <p>
-            Tithi {data.tithi_number} {data.paksha}
-          </p>
+          <PanchangView data={data} />
         ) : (
-          <p className="muted">{err || "Loading tithi…"}</p>
+          <p className="muted">{err || "Loading panchang…"}</p>
         )}
         <h3>Widget for this place</h3>
         <pre>{snippet}</pre>
