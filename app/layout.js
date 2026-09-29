@@ -17,9 +17,9 @@ export default function RootLayout({ children }) {
           </Link>
           <nav aria-label="Primary">
             <Link href="/tools">Tools</Link>
+            <Link href="/festivals">Festivals</Link>
+            <Link href="/compare">Compare</Link>
             <Link href="/calendar">Calendar</Link>
-            <Link href="/features">Features</Link>
-            <Link href="/temples">Temples</Link>
             <Link href="/widget">Widget</Link>
             <Link href="/pricing">Pricing</Link>
             <Link href="/account">Account</Link>
@@ -39,9 +39,10 @@ export default function RootLayout({ children }) {
               <p className="footer-label">Product</p>
               <Link href="/">Today</Link>
               <Link href="/tools">Converters</Link>
+              <Link href="/festivals">Ekadashi list</Link>
+              <Link href="/compare">Two cities</Link>
               <Link href="/calendar">Month</Link>
-              <Link href="/widget">Embed widget</Link>
-              <Link href="/alerts">Alerts</Link>
+              <Link href="/widget">Widget</Link>
             </div>
             <div>
               <p className="footer-label">Temples</p>
@@ -49,6 +50,7 @@ export default function RootLayout({ children }) {
               <Link href="/pricing">Plans</Link>
               <Link href="/start">Start</Link>
               <Link href="/features">What’s included</Link>
+              <Link href="/api-docs">API</Link>
             </div>
             <div>
               <p className="footer-label">Legal</p>
