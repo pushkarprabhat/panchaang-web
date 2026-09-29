@@ -10,7 +10,7 @@ export default function PrivacyPage() {
         <li>Payments: handled by the gateway. We store payment id and plan, not full card numbers.</li>
       </ul>
       <p>We do not sell this list. We use it to run the service, alerts, and invoices.</p>
-      <p>You may ask for deletion at legal@theiaone-ai.com.</p>
+      <p>You may ask for deletion at legal@panchaang.in.</p>
       <p>Location is requested in the browser and is optional. Refusing location keeps the Ahmedabad default.</p>
     </>
   );
