@@ -1,33 +1,36 @@
 .cal {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+  gap: 1px;
+  background: #e7e5e4;
+  border: 1px solid #e7e5e4;
   margin-top: 1rem;
 }
 .cal-h {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-align: center;
-  color: #c2410c;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: left;
+  color: #78716c;
+  background: #f3f1ec;
+  padding: 0.4rem 0.45rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 .cal-cell {
-  background: #fff;
-  border: 1px solid #ffd089;
-  border-radius: 10px;
-  min-height: 92px;
-  padding: 0.4rem;
+  background: #fffcf8;
+  min-height: 96px;
+  padding: 0.45rem;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.12rem;
   font-size: 0.72rem;
 }
-.cal-cell.empty { background: transparent; border-color: transparent; }
+.cal-cell.empty { background: #f3f1ec; }
 .cal-cell em {
   font-style: normal;
-  color: #9f1239;
-  font-weight: 600;
+  color: #9a3412;
+  font-weight: 500;
 }
 @media (max-width: 720px) {
-  .cal { font-size: 0.65rem; }
-  .cal-cell { min-height: 72px; padding: 0.25rem; }
+  .cal-cell { min-height: 76px; padding: 0.28rem; }
 }
