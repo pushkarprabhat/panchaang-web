@@ -23,6 +23,7 @@ export default function RootLayout({ children }) {
             <nav aria-label="Primary">
               <Link href="/">Today</Link>
               <Link href="/calendar">Month</Link>
+              <Link href="/my-tithi">My Tithi</Link>
               <Link href="/festivals">Forthcoming</Link>
               <Link href="/eclipses">Eclipses</Link>
               <Link href="/tools">Tools</Link>
@@ -46,6 +47,7 @@ export default function RootLayout({ children }) {
                 <p className="footer-label">Your calendar</p>
                 <Link href="/">Today</Link>
                 <Link href="/calendar">Month</Link>
+                <Link href="/my-tithi">My Tithi</Link>
                 <Link href="/festivals">Forthcoming</Link>
                 <Link href="/eclipses">Eclipses</Link>
                 <Link href="/tools">Converters</Link>
