@@ -18,7 +18,7 @@
 }
 .cal-cell {
   background: #fffcf8;
-  min-height: 96px;
+  min-height: 118px;
   padding: 0.45rem;
   display: flex;
   flex-direction: column;
@@ -27,15 +27,22 @@
 }
 .cal-cell.empty { background: #f3f1ec; }
 .cal-cell em { font-style: normal; color: #9a3412; font-weight: 500; }
+.cal-tithi { display: flex; align-items: center; gap: 0.25rem; }
+.cal-tithi svg { width: 16px; height: 16px; flex: none; }
+.cal-sun { font-size: 0.65rem; }
 .dow-sun { background: #fce7e7; }
 .dow-sat { background: #eef2f6; }
 .dow-sat-off { background: #d6dee8; }
 .band-pitru { box-shadow: inset 0 0 0 2px #d6c7a8; }
 .band-navratri { box-shadow: inset 0 0 0 2px #fdba74; }
 .band-diwali { box-shadow: inset 0 0 0 2px #eab308; }
+.band-panchak { box-shadow: inset 0 0 0 2px #0f766e; }
 .band-label { color: #57534e; font-size: 0.65rem; }
+.calendar-legend { font-size: 0.85rem; max-width: 48rem; margin-top: 1.2rem; }
+.calendar-legend ul { padding-left: 1.1rem; }
+.calendar-legend li { margin: 0.25rem 0; }
 @media (max-width: 720px) {
-  .cal-cell { min-height: 76px; padding: 0.28rem; }
+  .cal-cell { min-height: 88px; padding: 0.28rem; }
 }
 @media print {
   .topbar, header, footer, .row button, .row select, .row input { display: none !important; }
@@ -45,8 +52,7 @@
 .calendar-toolbar { padding: 1rem; background: var(--card); border: 1px solid var(--line); }
 .calendar-caption { font-family: "IBM Plex Serif", Georgia, serif; font-size: 1.2rem; }
 .calendar-scroll { overflow-x: auto; }
-.calendar-scroll .cal { min-width: 630px; margin-top: 0; }
-.calendar-legend { font-size: 0.8rem; max-width: 48rem; }
+.calendar-scroll .cal { min-width: 720px; margin-top: 0; }
 @media print {
   .calendar-toolbar, .calendar-plans, .skip-link { display: none !important; }
   .calendar-scroll { overflow: visible; }
