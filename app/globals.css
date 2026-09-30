@@ -6,8 +6,8 @@
   --ink: #1c1917;
   --muted: #57534e;
   --line: #e7e5e4;
-  --label: #78716c;
-  --accent: #9a3412;
+  --label: #625d56;
+  --accent: #24564e;
   --accent-ink: #fffdf9;
 }
 * { box-sizing: border-box; }
@@ -183,3 +183,52 @@ input, select {
   font-weight: 600;
 }
 .footer-meta { margin-top: 1.4rem; font-size: 0.82rem; }
+
+/* Public service layout: paper, ink and restrained green accents. */
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.skip-link { position: fixed; top: -5rem; left: 1rem; z-index: 100; background: var(--card); padding: 0.75rem 1rem; }
+.skip-link:focus { top: 1rem; }
+.site-header, .site-footer, main { max-width: 1100px; }
+.site-header { align-items: center; }
+.site-header nav { gap: 0.85rem; }
+.auth-action .lang-btn { background: var(--ink); color: var(--card); padding: 0.55rem 0.9rem; }
+.journey { list-style: none; display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; padding: 1rem 0; margin: 1.5rem 0; border-block: 1px solid var(--line); font-size: 0.85rem; }
+.journey a { font-weight: 500; }
+.today-card { border-top: 3px solid var(--accent); padding: clamp(1rem, 3vw, 2rem); scroll-margin-top: 1rem; }
+.today-card h2 { margin: 0.25rem 0 1.5rem; }
+.field-label { display: block; font-weight: 600; }
+.city-help { font-size: 0.88rem; margin: 0.25rem 0 0.7rem; }
+.today-card input { min-height: 46px; }
+.location-button { background: transparent; color: var(--accent); padding: 0.6rem 0; text-decoration: underline; }
+.location-button:hover { background: transparent; color: var(--ink); }
+.empty-search { padding: 0.8rem; color: var(--muted); }
+.today-card .panchang-full { margin-top: 1rem; }
+.kv { grid-template-columns: minmax(6rem, 34%) minmax(0, 1fr); }
+.kv dt { padding-right: 0.75rem; }
+.kv dd { overflow-wrap: anywhere; }
+.today-actions { display: flex; flex-wrap: wrap; gap: 0.8rem 1.25rem; align-items: center; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+.today-actions span { font-size: 0.85rem; }
+.next-step { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin: 2rem 0; padding: 1.5rem 0; border-block: 1px solid var(--line); }
+.next-step h2 { margin: 0.3rem 0; }
+.next-step p { margin-bottom: 0; }
+.pricing-note { padding: 1rem 1.25rem; border-left: 3px solid var(--accent); background: var(--card); }
+.plan-card { display: flex; flex-direction: column; }
+.plan-card h3 { font-family: "IBM Plex Serif", Georgia, serif; font-size: 1.4rem; margin: 0 0 0.5rem; }
+.plan-card .price { font-size: 2rem; }
+.plan-card .price span { display: block; font-size: 0.9rem; font-weight: 400; }
+.plan-card ul { flex: 1; margin-bottom: 1.5rem; }
+.plan-card li { margin-bottom: 0.6rem; }
+.plan-card .btn { text-align: center; }
+.plan-card.featured { border-color: var(--accent); border-top-width: 3px; }
+.site-footer { background: var(--card); }
+.footer-grid .brand { margin-top: 0; }
+.footer-grid .muted { font-size: 0.85rem; line-height: 1.7; }
+button:disabled { opacity: 0.5; cursor: wait; }
+@media (max-width: 719px) {
+  .site-header nav { gap: 0.6rem 1rem; }
+  .site-header nav a { padding-block: 0.25rem; }
+  .journey { flex-direction: column; }
+  .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footer-grid > :first-child { grid-column: 1 / -1; }
+  .today-actions .btn { width: 100%; text-align: center; }
+}

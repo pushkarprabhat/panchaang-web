@@ -14,6 +14,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Providers>
+          <a className="skip-link" href="#main-content">Skip to content</a>
           <div className="topbar">TheiaOne AI Systems LLP · Panchaang.in</div>
           <header className="site-header">
             <Link href="/" className="brand">
@@ -25,11 +26,12 @@ export default function RootLayout({ children }) {
               <Link href="/festivals">Forthcoming</Link>
               <Link href="/eclipses">Eclipses</Link>
               <Link href="/tools">Tools</Link>
+              <Link href="/pricing">Plans</Link>
               <LangToggle />
-              <AuthBar />
+              <span className="auth-action"><AuthBar /></span>
             </nav>
           </header>
-          <main>{children}</main>
+          <main id="main-content">{children}</main>
           <footer className="site-footer">
             <div className="footer-grid">
               <div>
@@ -41,7 +43,7 @@ export default function RootLayout({ children }) {
                 </p>
               </div>
               <div>
-                <p className="footer-label">Use</p>
+                <p className="footer-label">Your calendar</p>
                 <Link href="/">Today</Link>
                 <Link href="/calendar">Month</Link>
                 <Link href="/festivals">Forthcoming</Link>
@@ -54,7 +56,8 @@ export default function RootLayout({ children }) {
                 <Link href="/about">About</Link>
                 <Link href="/contact">Contact</Link>
                 <Link href="/services">Services</Link>
-                <Link href="/pricing">Pricing</Link>
+                <Link href="/pricing">Plans & pricing</Link>
+                <Link href="/compare">Compare</Link>
                 <Link href="/api-docs">API</Link>
               </div>
               <div>

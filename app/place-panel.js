@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { PLACES } from "../data/places";
 import PanchangView from "./panchang-view";
 
@@ -20,6 +21,7 @@ function nearest(lat, lon) {
 }
 
 export default function PlacePanel({ compact }) {
+  const requestId = useRef(0);
   const [q, setQ] = useState("Ahmedabad");
   const [place, setPlace] = useState(PLACES[0]);
   const [open, setOpen] = useState(false);
@@ -39,47 +41,36 @@ export default function PlacePanel({ compact }) {
   }, [q]);
 
   function load(p) {
+    const id = ++requestId.current;
     setErr("");
+    setData(null);
     fetch(
       `${API}/v1/panchang?city=${encodeURIComponent(p.name)}&latitude=${p.lat}&longitude=${p.lon}`
     )
-      .then((r) => r.json())
-      .then(setData)
-      .catch(() => setErr("Engine offline"));
+      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
+      .then((d) => { if (id === requestId.current) setData(d); })
+      .catch(() => { if (id === requestId.current) setErr("Today’s panchang could not be loaded. Please try again."); });
   }
 
-  function loadCoords(lat, lon, label) {
-    setErr("");
-    fetch(`${API}/v1/panchang?latitude=${lat}&longitude=${lon}`)
-      .then((r) => r.json())
-      .then((d) => {
-        setData(d);
-        setPlace({
-          name: label || d.place?.name || "This location",
-          admin: d.place?.province || "",
-          country: d.place?.country || "",
-          lat,
-          lon,
-          iso2: "XX",
-        });
-        setQ(label || `${lat.toFixed(3)}, ${lon.toFixed(3)}`);
-      })
-      .catch(() => setErr("Engine offline"));
+  function locate() {
+    if (!navigator.geolocation) { setLocNote("Location is unavailable. Please choose a city."); return; }
+    const id = ++requestId.current;
+    setLocNote("Finding your nearest city…");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (id !== requestId.current) return;
+        const near = nearest(pos.coords.latitude, pos.coords.longitude);
+        pick(near);
+        setLocNote(`Using the nearest listed city: ${near.name}`);
+      },
+      () => { if (id === requestId.current) { setLocNote("Location is unavailable. Please choose a city."); load(place); } },
+      { timeout: 10000 }
+    );
   }
 
   useEffect(() => {
     load(PLACES[0]);
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        const near = nearest(lat, lon);
-        setLocNote(`Near ${near.name}`);
-        loadCoords(lat, lon, near.name);
-      },
-      () => setLocNote("Ahmedabad default")
-    );
+    return () => { requestId.current += 1; };
   }, []);
 
   function pick(p) {
@@ -95,20 +86,32 @@ export default function PlacePanel({ compact }) {
 
   return (
     <div className={compact ? "" : "grid two"}>
-      <div className="card">
+      <section className="card today-card" id="today" aria-labelledby="today-heading">
+        <p className="eyebrow">01 · Your daily panchang</p>
+        <h2 id="today-heading">Today in {place.name}</h2>
+        <label htmlFor="city-search" className="field-label">Choose your city</label>
+        <p className="muted city-help" id="city-help">Times depend on your location. Search and select a city below.</p>
         <input
+          id="city-search"
+          type="search"
+          aria-describedby="city-help"
+          aria-expanded={open}
+          aria-controls="city-suggestions"
+          onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}
           value={q}
           onChange={(e) => {
             setQ(e.target.value);
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder="City"
+          placeholder="Search city, state or country"
           style={{ width: "100%" }}
         />
-        {locNote && <p className="muted">{locNote}</p>}
+        <button className="location-button" type="button" onClick={locate}>Use my location</button>
+        {locNote && <p className="muted" role="status">{locNote}</p>}
         {open && (
-          <ul className="suggest">
+          <ul className="suggest" id="city-suggestions">
+            {hits.length === 0 && <li className="empty-search">No matching city. Try a nearby city or state.</li>}
             {hits.map((p) => (
               <li key={`${p.iso2}-${p.name}-${p.admin}`}>
                 <button type="button" className="suggest-btn" onClick={() => pick(p)}>
@@ -122,8 +125,15 @@ export default function PlacePanel({ compact }) {
             ))}
           </ul>
         )}
-        {data ? <PanchangView data={data} /> : <p className="muted">{err || "Loading…"}</p>}
-      </div>
+        <div className="today-actions">
+          <Link className="btn" href={`/calendar?city=${encodeURIComponent(place.name)}`}>View month & download →</Link>
+          <span className="muted">Calendar file (.ics) or print / PDF</span>
+        </div>
+        <div aria-live="polite" aria-busy={!data && !err}>
+          {data ? <PanchangView data={data} /> : <p className="muted">{err || "Loading today’s panchang…"}</p>}
+        </div>
+        {err && <button type="button" onClick={() => load(place)}>Try again</button>}
+      </section>
       {!compact && (
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
           <iframe title="map" src={mapSrc} width="100%" height="360" style={{ border: 0, display: "block" }} loading="lazy" />

@@ -41,3 +41,15 @@
   .topbar, header, footer, .row button, .row select, .row input { display: none !important; }
   main { padding: 0; max-width: none; }
 }
+
+.calendar-toolbar { padding: 1rem; background: var(--card); border: 1px solid var(--line); }
+.calendar-caption { font-family: "IBM Plex Serif", Georgia, serif; font-size: 1.2rem; }
+.calendar-scroll { overflow-x: auto; }
+.calendar-scroll .cal { min-width: 630px; margin-top: 0; }
+.calendar-legend { font-size: 0.8rem; max-width: 48rem; }
+@media print {
+  .calendar-toolbar, .calendar-plans, .skip-link { display: none !important; }
+  .calendar-scroll { overflow: visible; }
+  .calendar-scroll .cal { min-width: 0; }
+  .cal-cell { break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}

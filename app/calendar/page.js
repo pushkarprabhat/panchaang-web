@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { PLACES } from "../../data/places";
 import { observances, tithiName } from "../panchang-labels";
 import { festivalsOn } from "../../data/festivals-2026";
 import { eclipsesOn } from "../../data/eclipses";
@@ -36,18 +38,33 @@ function dowClass(year, month, day) {
 export default function CalendarPage() {
   const now = new Date();
   const [city, setCity] = useState("Ahmedabad");
-  const [year, setYear] = useState(2026);
-  const [month, setMonth] = useState(now.getMonth() + 1 >= 10 ? 10 : now.getMonth() + 1);
+  const [year, setYear] = useState(now.getFullYear());
+  const [month, setMonth] = useState(now.getMonth() + 1);
   const [days, setDays] = useState([]);
   const [err, setErr] = useState("");
 
+  const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("city");
+    if (PLACES.some((p) => p.name === requested)) setCity(requested);
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    const controller = new AbortController();
     setErr("");
-    fetch(`${API}/v1/calendar?city=${encodeURIComponent(city)}&year=${year}&month=${month}`)
-      .then((r) => r.json())
-      .then((d) => setDays(d.days || []))
-      .catch(() => setErr("Engine offline"));
-  }, [city, year, month]);
+    setDays([]);
+    setLoading(true);
+    fetch(`${API}/v1/calendar?city=${encodeURIComponent(city)}&year=${year}&month=${month}`, { signal: controller.signal })
+      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
+      .then((d) => { if (!controller.signal.aborted) setDays(d.days || []); })
+      .catch(() => { if (!controller.signal.aborted) setErr("Panchang data could not be loaded. Select a month or city to try again."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [city, year, month, ready]);
 
   const byDate = useMemo(() => {
     const m = {};
@@ -67,6 +84,7 @@ export default function CalendarPage() {
 
   function shift(delta) {
     const dt = new Date(year, month - 1 + delta, 1);
+    if (dt.getFullYear() < 100 || dt.getFullYear() > 9999) return;
     setYear(dt.getFullYear());
     setMonth(dt.getMonth() + 1);
   }
@@ -94,28 +112,31 @@ export default function CalendarPage() {
   return (
     <>
       <p className="eyebrow">Month</p>
-      <h1>Calendar</h1>
-      <p className="row">
-        <button type="button" onClick={() => shift(-1)}>Prev</button>
+      <h1>Your month, at a glance.</h1>
+      <p className="lead">Choose a month and city. Download to your calendar, or print a copy to keep.</p>
+      <div className="row calendar-toolbar">
+        <button type="button" onClick={() => shift(-1)} aria-label="Previous month">←</button>
         <strong>{first.toLocaleString("en-IN", { month: "long", year: "numeric" })}</strong>
-        <button type="button" onClick={() => shift(1)}>Next</button>
-        <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
+        <button type="button" onClick={() => shift(1)} aria-label="Next month">→</button>
+        <select aria-label="Month" value={month} onChange={(e) => setMonth(Number(e.target.value))}>
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i + 1} value={i + 1}>
               {new Date(2026, i, 1).toLocaleString("en-IN", { month: "short" })}
             </option>
           ))}
         </select>
-        <input type="number" value={year} onChange={(e) => setYear(Number(e.target.value))} style={{ width: 90 }} />
-        <select value={city} onChange={(e) => setCity(e.target.value)}>
-          {CITIES.map((c) => (
+        <input aria-label="Year" type="number" min="100" max="9999" value={year} onChange={(e) => setYear(Math.min(9999, Math.max(100, Number(e.target.value))))} style={{ width: 90 }} />
+        <select aria-label="City" value={city} onChange={(e) => setCity(e.target.value)}>
+          {Array.from(new Set([...CITIES, city])).map((c) => (
             <option key={c}>{c}</option>
           ))}
         </select>
-        <button type="button" onClick={downloadIcs}>Download .ics</button>
+        <button type="button" disabled={loading || !!err || !days.length} onClick={downloadIcs}>Download month (.ics)</button>
         <button type="button" onClick={() => window.print()}>Print / PDF</button>
-      </p>
-      {err && <p className="muted">{err}</p>}
+      </div>
+      <p className="calendar-caption">{city} · {first.toLocaleString("en-IN", { month: "long", year: "numeric" })}</p>
+      <div role="status">{loading ? <p>Loading month…</p> : err ? <p>{err}</p> : !days.length ? <p>No panchang data is available for this month.</p> : null}</div>
+      <div className="calendar-scroll" role="region" aria-label="Month calendar" tabIndex={0}>
       <div className="cal">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((h) => (
           <div className="cal-h" key={h}>{h}</div>
@@ -155,10 +176,12 @@ export default function CalendarPage() {
           );
         })}
       </div>
-      <p className="muted">
+      </div>
+      <p className="muted calendar-legend">
         Sunday = rose. Saturday = stone. 2nd and 4th Saturday = stronger stone (typical bank off).
         Festivals are an IN overlay with tithi + state. Not every mela in every district.
       </p>
+      <p className="calendar-plans"><Link href="/pricing">Explore family and temple plans →</Link></p>
     </>
   );
 }
