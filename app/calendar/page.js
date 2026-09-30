@@ -4,10 +4,15 @@ import { useEffect, useMemo, useState } from "react";
 import { observances, tithiName } from "../panchang-labels";
 import { festivalsOn } from "../../data/festivals-2026";
 import { eclipsesOn } from "../../data/eclipses";
+import { bandsOn } from "../../data/bands-2026";
 import "./calendar.css";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
 const CITIES = ["Ahmedabad", "Ujjain", "Jaipur", "Mumbai", "Delhi", "Varanasi", "Kolkata", "Chennai"];
+
+function icsEscape(s) {
+  return String(s).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,");
+}
 
 export default function CalendarPage() {
   const now = new Date();
@@ -47,6 +52,38 @@ export default function CalendarPage() {
     setMonth(dt.getMonth() + 1);
   }
 
+  function downloadIcs() {
+    const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Panchaang.in//EN", "CALSCALE:GREGORIAN"];
+    for (const c of cells) {
+      if (!c) continue;
+      const row = byDate[c.key];
+      const named = festivalsOn(c.key).map((f) => f.name);
+      const vrats = row ? observances(row) : [];
+      const bands = bandsOn(c.key).map((b) => b.label);
+      const ecl = eclipsesOn(c.key).map((e) => `${e.type} ${e.kind} eclipse`);
+      const title = [...named, ...vrats, ...ecl][0] || (row ? `${row.paksha} ${tithiName(row.tithi_number, row.paksha)}` : "");
+      if (!title) continue;
+      const ymd = c.key.replace(/-/g, "");
+      const desc = [row ? `${row.paksha} ${tithiName(row.tithi_number, row.paksha)}` : "", ...bands, ...named, ...vrats, ...ecl]
+        .filter(Boolean)
+        .join(" · ");
+      lines.push(
+        "BEGIN:VEVENT",
+        `DTSTART;VALUE=DATE:${ymd}`,
+        `DTEND;VALUE=DATE:${ymd}`,
+        `SUMMARY:${icsEscape(`${title} (${city})`)}`,
+        `DESCRIPTION:${icsEscape(desc)}`,
+        "END:VEVENT"
+      );
+    }
+    lines.push("END:VCALENDAR");
+    const blob = new Blob([lines.join("\r\n")], { type: "text/calendar" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `panchaang-${city}-${year}-${String(month).padStart(2, "0")}.ics`;
+    a.click();
+  }
+
   return (
     <>
       <p className="eyebrow">Month</p>
@@ -68,6 +105,8 @@ export default function CalendarPage() {
             <option key={c}>{c}</option>
           ))}
         </select>
+        <button type="button" onClick={downloadIcs}>Download .ics</button>
+        <button type="button" onClick={() => window.print()}>Print / PDF</button>
       </p>
       {err && <p className="muted">{err}</p>}
       <div className="cal">
@@ -79,15 +118,20 @@ export default function CalendarPage() {
           const row = byDate[c.key];
           const named = festivalsOn(c.key);
           const ecl = eclipsesOn(c.key);
+          const bands = bandsOn(c.key);
           const vrats = row ? observances(row) : [];
+          const cls = ["cal-cell", ...bands.map((b) => `band-${b.id}`)].join(" ");
           return (
-            <div className="cal-cell" key={c.key}>
+            <div className={cls} key={c.key}>
               <strong>{c.d}</strong>
               {row && (
                 <span className="muted">
                   {row.paksha[0]} {tithiName(row.tithi_number, row.paksha)}
                 </span>
               )}
+              {bands.map((b) => (
+                <span className="band-label" key={b.id}>{b.label}</span>
+              ))}
               {vrats.map((v) => (
                 <em key={v}>{v}</em>
               ))}
@@ -101,7 +145,10 @@ export default function CalendarPage() {
           );
         })}
       </div>
-      <p className="muted">Tithi from the engine. Eclipses are NASA civil dates, not a city visibility map.</p>
+      <p className="muted">
+        Shaded: Pitru Paksha 27 Sep–10 Oct · Navratri 11–20 Oct · Diwali week 6–11 Nov.
+        Print / PDF uses the browser print dialog. .ics opens in Google Calendar.
+      </p>
     </>
   );
 }
