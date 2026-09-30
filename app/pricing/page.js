@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FAMILY, TEMPLE } from "../../data/plans";
+import { ADDONS, FAMILY, TEMPLE } from "../../data/plans";
 
 function Grid({ title, plans }) {
   return (
@@ -19,9 +19,7 @@ function Grid({ title, plans }) {
                 <li key={i}>{i}</li>
               ))}
             </ul>
-            <Link className="btn" href={p.id === "free" ? p.href : "/contact"}>
-              {p.id === "free" ? p.cta : p.cta}
-            </Link>
+            <Link className="btn" href={p.href}>{p.cta}</Link>
           </div>
         ))}
       </div>
@@ -33,15 +31,34 @@ export default function PricingPage() {
   return (
     <>
       <p className="eyebrow">Plans</p>
-      <h1>Pay once a year, if you pay at all.</h1>
+      <h1>Five plans. Add only what you need.</h1>
       <p className="lead">
-        Today is free. Family and temple work is billed per annum only. No monthly temple fee.
-        If the number is high, write to us and we will talk.
+        Home and mandir are billed once a year. Add-ons are optional extras on top of a paid plan.
       </p>
-      <p className="pricing-note">We are not taking cards yet. <Link href="/contact">Contact</Link> is enough.</p>
+      <p className="pricing-note">No cards yet. <Link href="/contact">Write to us</Link> with the plan and any add-on.</p>
       <Grid title="Home" plans={FAMILY} />
       <Grid title="Mandir" plans={TEMPLE} />
-      <p className="row"><Link href="/compare">Compare</Link> <Link href="/legal/refund">Refund</Link> <Link href="/legal/terms">Terms</Link></p>
+      <h2>Add-ons</h2>
+      <div className="card">
+        <table>
+          <thead>
+            <tr><th>Add-on</th><th>Price</th><th></th></tr>
+          </thead>
+          <tbody>
+            {ADDONS.map((a) => (
+              <tr key={a.id}>
+                <td>
+                  <strong>{a.name}</strong>
+                  <div className="muted">{a.note}</div>
+                </td>
+                <td>{a.price}</td>
+                <td><Link href="/contact">Ask</Link></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="row"><Link href="/compare">Compare</Link> <Link href="/legal/refund">Refund</Link></p>
     </>
   );
 }
