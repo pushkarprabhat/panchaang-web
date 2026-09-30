@@ -27,6 +27,7 @@
 }
 .cal-cell.empty { background: #f3f1ec; }
 .cal-cell em { font-style: normal; color: #9a3412; font-weight: 500; }
+.cal-cell em.mine { color: #0f766e; font-weight: 650; }
 .cal-tithi { display: flex; align-items: center; gap: 0.35rem; }
 .cal-sun { font-size: 0.65rem; }
 .dow-sun { background: #fce7e7; }
@@ -46,26 +47,19 @@
   gap: 1.5rem;
   width: 100%;
 }
-.calendar-side {
-  width: 100%;
-  max-width: 52rem;
-}
+.calendar-side { width: 100%; max-width: 52rem; }
 .side-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
 .side-table th, .side-table td { border-bottom: 1px solid #e7e5e4; padding: 0.35rem 0.4rem; text-align: left; }
-.day-table { min-width: 860px; }
+.day-table { min-width: 960px; }
 @media (max-width: 720px) {
   .cal-cell { min-height: 88px; padding: 0.28rem; }
-}
-@media print {
-  .topbar, header, footer, .row button, .row select, .row input { display: none !important; }
-  main { padding: 0; max-width: none; }
 }
 .calendar-toolbar { padding: 1rem; background: var(--card); border: 1px solid var(--line); }
 .calendar-caption { font-family: "IBM Plex Serif", Georgia, serif; font-size: 1.2rem; }
 .calendar-scroll { overflow-x: auto; width: 100%; }
 .calendar-scroll .cal { min-width: 720px; margin-top: 0; }
 @media print {
-  .calendar-toolbar, .calendar-plans, .skip-link { display: none !important; }
+  .calendar-toolbar, .calendar-plans, .skip-link, header, footer, .topbar { display: none !important; }
   .calendar-scroll { overflow: visible; }
   .calendar-scroll .cal { min-width: 0; }
   .cal-cell { break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
