@@ -16,7 +16,7 @@ export const FESTIVALS_2026 = {
   "2026-10-19": [{ name: "Durga Ashtami", country: "IN", region: "East / All India", state: "WB", paksha: "Shukla", tithi: 8 }],
   "2026-10-20": [{ name: "Dussehra / Vijayadashami", country: "IN", region: "All India", state: "", paksha: "Shukla", tithi: 10 }],
   "2026-10-22": [{ name: "Papankusha Ekadashi", country: "IN", region: "All India", state: "", paksha: "Shukla", tithi: 11 }],
-  "2026-10-25": [{ name: "Sharad Purnima", country: "IN", region: "All India", state: "", paksha: "Shukla", tithi: 15 }],
+  "2026-10-25": [{ name: "Sharad Purnima / Kojagari Purnima / Kumar Purnima", country: "IN", region: "All India", state: "", paksha: "Shukla", tithi: 15 }],
   "2026-10-29": [{ name: "Karva Chauth", country: "IN", region: "North", state: "RJ", paksha: "Krishna", tithi: 4 }],
   "2026-11-01": [{ name: "Ahoi Ashtami", country: "IN", region: "North", state: "UP", paksha: "Krishna", tithi: 8 }],
   "2026-11-05": [{ name: "Vasu Baras", country: "IN", region: "West", state: "GJ", paksha: "Krishna", tithi: 12 }],
@@ -29,7 +29,7 @@ export const FESTIVALS_2026 = {
   ],
   "2026-11-11": [{ name: "Bhai Beej", country: "IN", region: "West / North", state: "GJ", paksha: "Shukla", tithi: 2 }],
   "2026-11-15": [{ name: "Chhath begins", country: "IN", region: "East", state: "BR", paksha: "Shukla", tithi: 6 }],
-  "2026-11-24": [{ name: "Kartik Purnima", country: "IN", region: "All India", state: "", paksha: "Shukla", tithi: 15 }],
+  "2026-11-24": [{ name: "Kartika Purnima", country: "IN", region: "All India", state: "", paksha: "Shukla", tithi: 15 }],
 };
 
 const CITY_STATE = {
