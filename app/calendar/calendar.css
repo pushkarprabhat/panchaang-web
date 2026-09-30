@@ -27,8 +27,7 @@
 }
 .cal-cell.empty { background: #f3f1ec; }
 .cal-cell em { font-style: normal; color: #9a3412; font-weight: 500; }
-.cal-tithi { display: flex; align-items: center; gap: 0.25rem; }
-.cal-tithi svg { width: 16px; height: 16px; flex: none; }
+.cal-tithi { display: flex; align-items: center; gap: 0.35rem; }
 .cal-sun { font-size: 0.65rem; }
 .dow-sun { background: #fce7e7; }
 .dow-sat { background: #eef2f6; }
@@ -41,6 +40,19 @@
 .calendar-legend { font-size: 0.85rem; max-width: 48rem; margin-top: 1.2rem; }
 .calendar-legend ul { padding-left: 1.1rem; }
 .calendar-legend li { margin: 0.25rem 0; }
+.calendar-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(240px, 0.9fr);
+  gap: 1.2rem;
+  align-items: start;
+}
+.calendar-side { min-width: 0; }
+.side-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+.side-table th, .side-table td { border-bottom: 1px solid #e7e5e4; padding: 0.35rem 0.4rem; text-align: left; }
+.day-table { min-width: 860px; }
+@media (max-width: 960px) {
+  .calendar-board { grid-template-columns: 1fr; }
+}
 @media (max-width: 720px) {
   .cal-cell { min-height: 88px; padding: 0.28rem; }
 }
@@ -48,7 +60,6 @@
   .topbar, header, footer, .row button, .row select, .row input { display: none !important; }
   main { padding: 0; max-width: none; }
 }
-
 .calendar-toolbar { padding: 1rem; background: var(--card); border: 1px solid var(--line); }
 .calendar-caption { font-family: "IBM Plex Serif", Georgia, serif; font-size: 1.2rem; }
 .calendar-scroll { overflow-x: auto; }
