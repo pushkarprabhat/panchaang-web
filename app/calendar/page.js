@@ -32,9 +32,9 @@ function dowClass(year, month, day) {
   return "";
 }
 function hm(iso) {
-  if (!iso) return "\u2014";
+  if (!iso) return "";
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "\u2014";
+  if (Number.isNaN(d.getTime())) return "";
   return new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true }).format(d);
 }
 function dayLabel(iso) {
@@ -57,6 +57,8 @@ function mergePanchang(row, j) {
     yoga_end: j.yoga?.end || row.yoga_end,
     karana: j.karana?.name || row.karana,
     karana_end: j.karana?.end || row.karana_end,
+    moonrise: j.moonrise || row.moonrise || "",
+    moonset: j.moonset || row.moonset || "",
   };
 }
 
@@ -94,7 +96,7 @@ export default function CalendarPage() {
         let rows = d.days || [];
         if (!controller.signal.aborted) setDays(rows);
         if (!controller.signal.aborted) setLoading(false);
-        const need = rows.some((r) => !r.nakshatra_end);
+        const need = rows.some((r) => !r.nakshatra_end || !r.moonrise);
         if (need) {
           const out = [];
           for (let i = 0; i < rows.length; i += 4) {
@@ -182,14 +184,16 @@ export default function CalendarPage() {
     a.click();
   }
 
+  const monthTitle = first.toLocaleString("en-IN", { month: "long", year: "numeric" });
+
   return (
     <>
       <p className="eyebrow">Month</p>
       <h1>Your month, at a glance.</h1>
       <div className="row calendar-toolbar">
-        <button type="button" onClick={() => shift(-1)} aria-label="Previous month">\u2190</button>
-        <strong>{first.toLocaleString("en-IN", { month: "long", year: "numeric" })}</strong>
-        <button type="button" onClick={() => shift(1)} aria-label="Next month">\u2192</button>
+        <button type="button" onClick={() => shift(-1)} aria-label="Previous month">Previous</button>
+        <strong>{monthTitle}</strong>
+        <button type="button" onClick={() => shift(1)} aria-label="Next month">Next</button>
         <select aria-label="Month" value={month} onChange={(e) => setMonth(Number(e.target.value))}>
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i + 1} value={i + 1}>{new Date(2026, i, 1).toLocaleString("en-IN", { month: "short" })}</option>
@@ -203,8 +207,8 @@ export default function CalendarPage() {
         <button type="button" disabled={loading || !!err || !days.length} onClick={downloadIcs}>Download month (.ics)</button>
         <button type="button" onClick={() => window.print()}>Print / PDF</button>
       </div>
-      <p className="calendar-caption">{city} \u00b7 {first.toLocaleString("en-IN", { month: "long", year: "numeric" })}</p>
-      <div role="status">{loading ? <p>Loading month\u2026</p> : err ? <p>{err}</p> : null}</div>
+      <p className="calendar-caption">{city}, {monthTitle}</p>
+      <div role="status">{loading ? <p>Loading month...</p> : err ? <p>{err}</p> : null}</div>
 
       <div className="calendar-board">
         <div className="calendar-scroll" role="region" aria-label="Month calendar" tabIndex={0}>
@@ -228,12 +232,12 @@ export default function CalendarPage() {
                       {pakshaMark(row.paksha)} {tithiName(row.tithi_number, row.paksha)}
                     </span>
                   )}
-                  {row && <span className="muted cal-sun">Rise {hm(row.sunrise)} \u00b7 Set {hm(row.sunset)}</span>}
-                  {row && row.saura_rashi && <span className="muted">{row.saura_rashi}{row.surya_rashi_exits ? ` \u2192 ${dayLabel(row.surya_rashi_exits)}` : ""}</span>}
+                  {row && <span className="muted cal-sun">Rise {hm(row.sunrise)} | Set {hm(row.sunset)}</span>}
+                  {row && row.saura_rashi && <span className="muted">{row.saura_rashi}{row.surya_rashi_exits ? ` to ${dayLabel(row.surya_rashi_exits)}` : ""}</span>}
                   {panchak.map((p) => <span className="band-label" key={p.label}>{p.label}</span>)}
                   {bands.filter((b) => b.id !== "panchak").map((b) => <span className="band-label" key={b.id}>{b.label}</span>)}
                   {vrats.map((v) => <em key={v}>{v}</em>)}
-                  {named.map((f) => <em key={f.name}>{f.name}{f.state ? ` \u00b7 ${f.state}` : ""}</em>)}
+                  {named.map((f) => <em key={f.name}>{f.name}{f.state ? ` (${f.state})` : ""}</em>)}
                   {ecl.map((e) => <em key={e.kind}>{e.type} {e.kind}</em>)}
                 </div>
               );
@@ -256,13 +260,25 @@ export default function CalendarPage() {
       </div>
 
       <p className="eyebrow" style={{ marginTop: "1.4rem" }}>Day table</p>
-      <p className="muted">End times fill in over a few seconds from the live engine.</p>
+      <p className="muted">End times and moon times fill in from the engine.</p>
       <div className="calendar-scroll">
         <table className="side-table day-table">
           <thead>
             <tr>
-              <th>Date</th><th>Tithi</th><th>Tithi ends</th><th>Nakshatra</th><th>Nakshatra ends</th>
-              <th>Karana</th><th>Karana ends</th><th>Yoga</th><th>Yoga ends</th><th>Sunset</th><th></th>
+              <th>Date</th>
+              <th>Tithi</th>
+              <th>Tithi ends</th>
+              <th>Sunrise</th>
+              <th>Sunset</th>
+              <th>Moonrise</th>
+              <th>Moonset</th>
+              <th>Nakshatra</th>
+              <th>Nakshatra ends</th>
+              <th>Karana</th>
+              <th>Karana ends</th>
+              <th>Yoga</th>
+              <th>Yoga ends</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -271,13 +287,16 @@ export default function CalendarPage() {
                 <td>{row.date}</td>
                 <td>{pakshaMark(row.paksha)} {tithiName(row.tithi_number, row.paksha)}</td>
                 <td>{hm(row.tithi_end)}</td>
-                <td>{row.nakshatra || "\u2014"}</td>
-                <td>{hm(row.nakshatra_end)}</td>
-                <td>{row.karana || "\u2014"}</td>
-                <td>{hm(row.karana_end)}</td>
-                <td>{row.yoga || "\u2014"}</td>
-                <td>{hm(row.yoga_end)}</td>
+                <td>{hm(row.sunrise)}</td>
                 <td>{hm(row.sunset)}</td>
+                <td>{hm(row.moonrise)}</td>
+                <td>{hm(row.moonset)}</td>
+                <td>{row.nakshatra || ""}</td>
+                <td>{hm(row.nakshatra_end)}</td>
+                <td>{row.karana || ""}</td>
+                <td>{hm(row.karana_end)}</td>
+                <td>{row.yoga || ""}</td>
+                <td>{hm(row.yoga_end)}</td>
                 <td><button type="button" onClick={() => rememberRow(row)}>Remember</button></td>
               </tr>
             ))}
@@ -286,18 +305,18 @@ export default function CalendarPage() {
       </div>
 
       <p className="eyebrow" style={{ marginTop: "1.4rem" }}>Remembered tithis</p>
-      {remembered.length === 0 ? <p className="muted">Save a birthday, shraddh or anniversary tithi from the day table.</p> : (
+      {remembered.length === 0 ? <p className="muted">Save a birthday, shraddh or anniversary tithi from the day table or My Tithi.</p> : (
         <ul>
           {remembered.map((item) => (
             <li key={item.id}>
-              {item.label} \u2014 {item.paksha} tithi {item.tithi} ({item.date} \u00b7 {item.city})
+              {item.label} - {item.paksha} tithi {item.tithi} ({item.date || item.gregorian}, {item.city})
               {" "}
               <button type="button" onClick={() => { removeRemembered(item.id); setRemembered(listRemembered()); }}>Remove</button>
             </li>
           ))}
         </ul>
       )}
-      <p className="calendar-plans"><Link href="/pricing">Family alerts on a plan will email these \u2192</Link></p>
+      <p className="calendar-plans"><Link href="/my-tithi">Open My Tithi</Link> · <Link href="/pricing">Family email alerts on a plan</Link></p>
     </>
   );
 }
