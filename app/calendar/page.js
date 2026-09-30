@@ -8,6 +8,7 @@ import { festivalsOn } from "../../data/festivals-2026";
 import { eclipsesOn } from "../../data/eclipses";
 import { bandsOn, panchakMarksOn } from "../../data/bands-2026";
 import { TithiMoon } from "../sky-icons";
+import LangToggle from "../lang-toggle";
 import "./calendar.css";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
@@ -37,13 +38,15 @@ function dowClass(year, month, day) {
 }
 
 function hm(iso) {
-  if (!iso) return "";
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
   return new Intl.DateTimeFormat("en-IN", {
     timeZone: "Asia/Kolkata",
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-  }).format(new Date(iso));
+  }).format(d);
 }
 
 function dayLabel(iso) {
@@ -67,8 +70,8 @@ export default function CalendarPage() {
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [days, setDays] = useState([]);
+  const [planets, setPlanets] = useState([]);
   const [err, setErr] = useState("");
-
   const [loading, setLoading] = useState(true);
   const [ready, setReady] = useState(false);
 
@@ -89,6 +92,11 @@ export default function CalendarPage() {
       .then((d) => { if (!controller.signal.aborted) setDays(d.days || []); })
       .catch(() => { if (!controller.signal.aborted) setErr("Panchang data could not be loaded. Select a month or city to try again."); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    const noon = new Date(Date.UTC(year, month - 1, 1, 6, 30, 0)).toISOString();
+    fetch(`${API}/v1/panchang?city=${encodeURIComponent(city)}&date_time=${encodeURIComponent(noon)}`, { signal: controller.signal })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (!controller.signal.aborted) setPlanets(d?.planets || []); })
+      .catch(() => { if (!controller.signal.aborted) setPlanets([]); });
     return () => controller.abort();
   }, [city, year, month, ready]);
 
@@ -139,7 +147,7 @@ export default function CalendarPage() {
     <>
       <p className="eyebrow">Month</p>
       <h1>Your month, at a glance.</h1>
-      <p className="lead">Choose a month and city. Download to your calendar, or print a copy to keep.</p>
+      <p className="lead">Choose a month and city. Language is in this bar and in the header.</p>
       <div className="row calendar-toolbar">
         <button type="button" onClick={() => shift(-1)} aria-label="Previous month">←</button>
         <strong>{first.toLocaleString("en-IN", { month: "long", year: "numeric" })}</strong>
@@ -157,74 +165,131 @@ export default function CalendarPage() {
             <option key={c}>{c}</option>
           ))}
         </select>
+        <LangToggle />
         <button type="button" disabled={loading || !!err || !days.length} onClick={downloadIcs}>Download month (.ics)</button>
         <button type="button" onClick={() => window.print()}>Print / PDF</button>
       </div>
       <p className="calendar-caption">{city} · {first.toLocaleString("en-IN", { month: "long", year: "numeric" })}</p>
       <div role="status">{loading ? <p>Loading month…</p> : err ? <p>{err}</p> : !days.length ? <p>No panchang data is available for this month.</p> : null}</div>
-      <div className="calendar-scroll" role="region" aria-label="Month calendar" tabIndex={0}>
-      <div className="cal">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((h) => (
-          <div className="cal-h" key={h}>{h}</div>
-        ))}
-        {cells.map((c, i) => {
-          if (!c) return <div className="cal-cell empty" key={`e${i}`} />;
-          const row = byDate[c.key];
-          const named = festivalsOn(c.key);
-          const ecl = eclipsesOn(c.key);
-          const bands = bandsOn(c.key);
-          const panchak = panchakMarksOn(c.key);
-          const vrats = row ? observances(row) : [];
-          const cls = ["cal-cell", dowClass(year, month, c.d), ...bands.map((b) => `band-${b.id}`)].join(" ");
-          return (
-            <div className={cls} key={c.key}>
-              <strong className="cal-daynum">{c.d}</strong>
-              {row && (
-                <span className="cal-tithi">
-                  <TithiMoon tithi={row.tithi_number} paksha={row.paksha} />
-                  {pakshaMark(row.paksha)} {tithiName(row.tithi_number, row.paksha)}
-                </span>
-              )}
-              {row && (
-                <span className="muted cal-sun">☀ {hm(row.sunrise)} · ☾ {hm(row.sunset)}</span>
-              )}
-              {row && row.saura_rashi && (
-                <span className="muted">{row.saura_rashi}{row.surya_rashi_exits ? ` → ${dayLabel(row.surya_rashi_exits)}` : ""}</span>
-              )}
-              {panchak.map((p) => (
-                <span className="band-label" key={p.label}>{p.label}</span>
-              ))}
-              {bands.filter((b) => b.id !== "panchak").map((b) => (
-                <span className="band-label" key={b.id}>{b.label}</span>
-              ))}
-              {vrats.map((v) => (
-                <em key={v}>{v}</em>
-              ))}
-              {named.map((f) => (
-                <em key={f.name}>
-                  {f.name}
-                  {f.state ? ` · ${f.state}` : ""}
-                </em>
-              ))}
-              {ecl.map((e) => (
-                <em key={e.kind}>{e.type} {e.kind}</em>
-              ))}
-            </div>
-          );
-        })}
+
+      <div className="calendar-board">
+        <div className="calendar-scroll" role="region" aria-label="Month calendar" tabIndex={0}>
+          <div className="cal">
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((h) => (
+              <div className="cal-h" key={h}>{h}</div>
+            ))}
+            {cells.map((c, i) => {
+              if (!c) return <div className="cal-cell empty" key={`e${i}`} />;
+              const row = byDate[c.key];
+              const named = festivalsOn(c.key);
+              const ecl = eclipsesOn(c.key);
+              const bands = bandsOn(c.key);
+              const panchak = panchakMarksOn(c.key);
+              const vrats = row ? observances(row) : [];
+              const cls = ["cal-cell", dowClass(year, month, c.d), ...bands.map((b) => `band-${b.id}`)].join(" ");
+              return (
+                <div className={cls} key={c.key}>
+                  <strong className="cal-daynum">{c.d}</strong>
+                  {row && (
+                    <span className="cal-tithi">
+                      <TithiMoon tithi={row.tithi_number} paksha={row.paksha} size={22} />
+                      {pakshaMark(row.paksha)} {tithiName(row.tithi_number, row.paksha)}
+                    </span>
+                  )}
+                  {row && (
+                    <span className="muted cal-sun">Rise {hm(row.sunrise)} · Set {hm(row.sunset)}</span>
+                  )}
+                  {row && row.saura_rashi && (
+                    <span className="muted">{row.saura_rashi}{row.surya_rashi_exits ? ` → ${dayLabel(row.surya_rashi_exits)}` : ""}</span>
+                  )}
+                  {panchak.map((p) => (
+                    <span className="band-label" key={p.label}>{p.label}</span>
+                  ))}
+                  {bands.filter((b) => b.id !== "panchak").map((b) => (
+                    <span className="band-label" key={b.id}>{b.label}</span>
+                  ))}
+                  {vrats.map((v) => (
+                    <em key={v}>{v}</em>
+                  ))}
+                  {named.map((f) => (
+                    <em key={f.name}>{f.name}{f.state ? ` · ${f.state}` : ""}</em>
+                  ))}
+                  {ecl.map((e) => (
+                    <em key={e.kind}>{e.type} {e.kind}</em>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <aside className="calendar-side">
+          <p className="eyebrow">Planet transits</p>
+          {planets.length === 0 ? (
+            <p className="muted">Rebuild the API to list Mercury–Saturn here.</p>
+          ) : (
+            <table className="side-table">
+              <thead>
+                <tr><th>Planet</th><th>Rashi</th><th>Entered</th><th>Exits</th></tr>
+              </thead>
+              <tbody>
+                {planets.map((p) => (
+                  <tr key={p.body}>
+                    <td>{p.body}</td>
+                    <td>{p.name}</td>
+                    <td>{dayLabel(p.entered)} {hm(p.entered)}</td>
+                    <td>{dayLabel(p.exits)} {hm(p.exits)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </aside>
       </div>
+
+      <p className="eyebrow" style={{ marginTop: "1.4rem" }}>Day table</p>
+      <div className="calendar-scroll">
+        <table className="side-table day-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Tithi</th>
+              <th>Tithi ends</th>
+              <th>Nakshatra</th>
+              <th>Nakshatra ends</th>
+              <th>Karana</th>
+              <th>Karana ends</th>
+              <th>Yoga</th>
+              <th>Yoga ends</th>
+              <th>Sunset</th>
+            </tr>
+          </thead>
+          <tbody>
+            {days.map((row) => (
+              <tr key={row.date}>
+                <td>{row.date}</td>
+                <td>{pakshaMark(row.paksha)} {tithiName(row.tithi_number, row.paksha)}</td>
+                <td>{hm(row.tithi_end)}</td>
+                <td>{row.nakshatra || "—"}</td>
+                <td>{hm(row.nakshatra_end)}</td>
+                <td>{row.karana || "—"}</td>
+                <td>{hm(row.karana_end)}</td>
+                <td>{row.yoga || "—"}</td>
+                <td>{hm(row.yoga_end)}</td>
+                <td>{hm(row.sunset)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+
       <div className="calendar-legend">
         <p><strong>Legend</strong></p>
         <ul>
-          <li><strong>Sh</strong> = Shukla paksha (waxing). <strong>Kr</strong> = Krishna paksha (waning).</li>
-          <li>Moon disc = tithi of that sunrise (Krishna shown hollow-to-full reversed).</li>
-          <li>☀ sunrise and ☾ sunset at the selected city (IST).</li>
-          <li>Rashi name + arrow = Surya rashi and the civil date it exits (needs rebuilt API).</li>
-          <li>Rose cell = Sunday. Stone = Saturday. Darker stone = 2nd or 4th Saturday.</li>
-          <li>Sand border = Pitru Paksha / Shradh. Saffron border = Sharad Navratri / Garba. Gold = Diwali week. Teal = Panchak.</li>
-          <li><strong>Panchak begins / ends</strong> marked on the edge days (2026 list; city can shift hours).</li>
-          <li>Festival · WB / BR / GJ = regional. Mahalaya is tagged WB. Mana Chaturthi 14 Oct is tagged BR.</li>
+          <li><strong>Sh</strong> = Shukla paksha. <strong>Kr</strong> = Krishna paksha.</li>
+          <li>Moon disc = tithi at sunrise. Larger gold = more light.</li>
+          <li>Rise / Set = sunrise and sunset at the selected city (IST).</li>
+          <li>Day table end-times need the latest API rebuild.</li>
         </ul>
       </div>
       <p className="calendar-plans"><Link href="/pricing">Explore family and temple plans →</Link></p>
