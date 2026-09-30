@@ -26,14 +26,13 @@
   font-size: 0.72rem;
 }
 .cal-cell.empty { background: #f3f1ec; }
-.cal-cell em {
-  font-style: normal;
-  color: #9a3412;
-  font-weight: 500;
-}
-.band-pitru { background: #f5f0e6; }
-.band-navratri { background: #fde8d8; }
-.band-diwali { background: #fde68a; }
+.cal-cell em { font-style: normal; color: #9a3412; font-weight: 500; }
+.dow-sun { background: #fce7e7; }
+.dow-sat { background: #eef2f6; }
+.dow-sat-off { background: #d6dee8; }
+.band-pitru { box-shadow: inset 0 0 0 2px #d6c7a8; }
+.band-navratri { box-shadow: inset 0 0 0 2px #fdba74; }
+.band-diwali { box-shadow: inset 0 0 0 2px #eab308; }
 .band-label { color: #57534e; font-size: 0.65rem; }
 @media (max-width: 720px) {
   .cal-cell { min-height: 76px; padding: 0.28rem; }
@@ -41,5 +40,4 @@
 @media print {
   .topbar, header, footer, .row button, .row select, .row input { display: none !important; }
   main { padding: 0; max-width: none; }
-  .cal-cell { min-height: 70px; break-inside: avoid; }
 }
