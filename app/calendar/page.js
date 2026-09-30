@@ -14,6 +14,25 @@ function icsEscape(s) {
   return String(s).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,");
 }
 
+function satNumber(year, month, day) {
+  let n = 0;
+  for (let d = 1; d <= day; d += 1) {
+    if (new Date(Date.UTC(year, month - 1, d)).getUTCDay() === 6) n += 1;
+  }
+  return n;
+}
+
+function dowClass(year, month, day) {
+  const wd = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  if (wd === 0) return "dow-sun";
+  if (wd === 6) {
+    const n = satNumber(year, month, day);
+    if (n === 2 || n === 4) return "dow-sat-off";
+    return "dow-sat";
+  }
+  return "";
+}
+
 export default function CalendarPage() {
   const now = new Date();
   const [city, setCity] = useState("Ahmedabad");
@@ -57,24 +76,12 @@ export default function CalendarPage() {
     for (const c of cells) {
       if (!c) continue;
       const row = byDate[c.key];
-      const named = festivalsOn(c.key).map((f) => f.name);
+      const named = festivalsOn(c.key, city).map((f) => f.name);
       const vrats = row ? observances(row) : [];
-      const bands = bandsOn(c.key).map((b) => b.label);
-      const ecl = eclipsesOn(c.key).map((e) => `${e.type} ${e.kind} eclipse`);
-      const title = [...named, ...vrats, ...ecl][0] || (row ? `${row.paksha} ${tithiName(row.tithi_number, row.paksha)}` : "");
+      const title = [...named, ...vrats][0] || (row ? `${row.paksha} ${tithiName(row.tithi_number, row.paksha)}` : "");
       if (!title) continue;
       const ymd = c.key.replace(/-/g, "");
-      const desc = [row ? `${row.paksha} ${tithiName(row.tithi_number, row.paksha)}` : "", ...bands, ...named, ...vrats, ...ecl]
-        .filter(Boolean)
-        .join(" · ");
-      lines.push(
-        "BEGIN:VEVENT",
-        `DTSTART;VALUE=DATE:${ymd}`,
-        `DTEND;VALUE=DATE:${ymd}`,
-        `SUMMARY:${icsEscape(`${title} (${city})`)}`,
-        `DESCRIPTION:${icsEscape(desc)}`,
-        "END:VEVENT"
-      );
+      lines.push("BEGIN:VEVENT", `DTSTART;VALUE=DATE:${ymd}`, `SUMMARY:${icsEscape(`${title} (${city})`)}`, "END:VEVENT");
     }
     lines.push("END:VCALENDAR");
     const blob = new Blob([lines.join("\r\n")], { type: "text/calendar" });
@@ -116,11 +123,11 @@ export default function CalendarPage() {
         {cells.map((c, i) => {
           if (!c) return <div className="cal-cell empty" key={`e${i}`} />;
           const row = byDate[c.key];
-          const named = festivalsOn(c.key);
+          const named = festivalsOn(c.key, city);
           const ecl = eclipsesOn(c.key);
           const bands = bandsOn(c.key);
           const vrats = row ? observances(row) : [];
-          const cls = ["cal-cell", ...bands.map((b) => `band-${b.id}`)].join(" ");
+          const cls = ["cal-cell", dowClass(year, month, c.d), ...bands.map((b) => `band-${b.id}`)].join(" ");
           return (
             <div className={cls} key={c.key}>
               <strong>{c.d}</strong>
@@ -136,18 +143,21 @@ export default function CalendarPage() {
                 <em key={v}>{v}</em>
               ))}
               {named.map((f) => (
-                <em key={f.name}>{f.name}</em>
+                <em key={f.name}>
+                  {f.name}
+                  {f.state ? ` · ${f.state}` : ""}
+                </em>
               ))}
               {ecl.map((e) => (
-                <em key={e.kind}>{e.type} {e.kind} eclipse</em>
+                <em key={e.kind}>{e.type} {e.kind}</em>
               ))}
             </div>
           );
         })}
       </div>
       <p className="muted">
-        Shaded: Pitru Paksha 27 Sep–10 Oct · Navratri 11–20 Oct · Diwali week 6–11 Nov.
-        Print / PDF uses the browser print dialog. .ics opens in Google Calendar.
+        Sunday = rose. Saturday = stone. 2nd and 4th Saturday = stronger stone (typical bank off).
+        Festivals are an IN overlay with tithi + state. Not every mela in every district.
       </p>
     </>
   );
