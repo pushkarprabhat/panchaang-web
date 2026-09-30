@@ -6,7 +6,8 @@ import { PLACES } from "../../data/places";
 import { observances, tithiName } from "../panchang-labels";
 import { festivalsOn } from "../../data/festivals-2026";
 import { eclipsesOn } from "../../data/eclipses";
-import { bandsOn } from "../../data/bands-2026";
+import { bandsOn, panchakMarksOn } from "../../data/bands-2026";
+import { TithiMoon } from "../sky-icons";
 import "./calendar.css";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
@@ -33,6 +34,31 @@ function dowClass(year, month, day) {
     return "dow-sat";
   }
   return "";
+}
+
+function hm(iso) {
+  if (!iso) return "";
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).format(new Date(iso));
+}
+
+function dayLabel(iso) {
+  if (!iso) return "";
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "numeric",
+    month: "short",
+  }).format(new Date(iso));
+}
+
+function pakshaMark(p) {
+  if (p === "Shukla") return "Sh";
+  if (p === "Krishna") return "Kr";
+  return p || "";
 }
 
 export default function CalendarPage() {
@@ -94,7 +120,7 @@ export default function CalendarPage() {
     for (const c of cells) {
       if (!c) continue;
       const row = byDate[c.key];
-      const named = festivalsOn(c.key, city).map((f) => f.name);
+      const named = festivalsOn(c.key).map((f) => f.name);
       const vrats = row ? observances(row) : [];
       const title = [...named, ...vrats][0] || (row ? `${row.paksha} ${tithiName(row.tithi_number, row.paksha)}` : "");
       if (!title) continue;
@@ -144,20 +170,31 @@ export default function CalendarPage() {
         {cells.map((c, i) => {
           if (!c) return <div className="cal-cell empty" key={`e${i}`} />;
           const row = byDate[c.key];
-          const named = festivalsOn(c.key, city);
+          const named = festivalsOn(c.key);
           const ecl = eclipsesOn(c.key);
           const bands = bandsOn(c.key);
+          const panchak = panchakMarksOn(c.key);
           const vrats = row ? observances(row) : [];
           const cls = ["cal-cell", dowClass(year, month, c.d), ...bands.map((b) => `band-${b.id}`)].join(" ");
           return (
             <div className={cls} key={c.key}>
-              <strong>{c.d}</strong>
+              <strong className="cal-daynum">{c.d}</strong>
               {row && (
-                <span className="muted">
-                  {row.paksha[0]} {tithiName(row.tithi_number, row.paksha)}
+                <span className="cal-tithi">
+                  <TithiMoon tithi={row.tithi_number} paksha={row.paksha} />
+                  {pakshaMark(row.paksha)} {tithiName(row.tithi_number, row.paksha)}
                 </span>
               )}
-              {bands.map((b) => (
+              {row && (
+                <span className="muted cal-sun">☀ {hm(row.sunrise)} · ☾ {hm(row.sunset)}</span>
+              )}
+              {row && row.saura_rashi && (
+                <span className="muted">{row.saura_rashi}{row.surya_rashi_exits ? ` → ${dayLabel(row.surya_rashi_exits)}` : ""}</span>
+              )}
+              {panchak.map((p) => (
+                <span className="band-label" key={p.label}>{p.label}</span>
+              ))}
+              {bands.filter((b) => b.id !== "panchak").map((b) => (
                 <span className="band-label" key={b.id}>{b.label}</span>
               ))}
               {vrats.map((v) => (
@@ -177,10 +214,19 @@ export default function CalendarPage() {
         })}
       </div>
       </div>
-      <p className="muted calendar-legend">
-        Sunday = rose. Saturday = stone. 2nd and 4th Saturday = stronger stone (typical bank off).
-        Festivals are an IN overlay with tithi + state. Not every mela in every district.
-      </p>
+      <div className="calendar-legend">
+        <p><strong>Legend</strong></p>
+        <ul>
+          <li><strong>Sh</strong> = Shukla paksha (waxing). <strong>Kr</strong> = Krishna paksha (waning).</li>
+          <li>Moon disc = tithi of that sunrise (Krishna shown hollow-to-full reversed).</li>
+          <li>☀ sunrise and ☾ sunset at the selected city (IST).</li>
+          <li>Rashi name + arrow = Surya rashi and the civil date it exits (needs rebuilt API).</li>
+          <li>Rose cell = Sunday. Stone = Saturday. Darker stone = 2nd or 4th Saturday.</li>
+          <li>Sand border = Pitru Paksha / Shradh. Saffron border = Sharad Navratri / Garba. Gold = Diwali week. Teal = Panchak.</li>
+          <li><strong>Panchak begins / ends</strong> marked on the edge days (2026 list; city can shift hours).</li>
+          <li>Festival · WB / BR / GJ = regional. Mahalaya is tagged WB. Mana Chaturthi 14 Oct is tagged BR.</li>
+        </ul>
+      </div>
       <p className="calendar-plans"><Link href="/pricing">Explore family and temple plans →</Link></p>
     </>
   );
