@@ -9,6 +9,7 @@ import {
   yogaName,
 } from "./panchang-labels";
 import { choghadiyaDay } from "./choghadiya";
+import { MoonDown, MoonUp, SunDown, SunUp, TithiMoon } from "./sky-icons";
 
 function gregorianLine(iso) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -50,8 +51,11 @@ export default function PanchangView({ data }) {
       <p className="muted" style={{ margin: "0.6rem 0 0" }}>
         {gregorianLine(when)}
       </p>
-      <p className="panchang-hero">
-        {data.paksha} {tithi}
+      <p className="panchang-hero" style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+        <TithiMoon tithi={data.tithi_number} paksha={data.paksha} />
+        <span>
+          {data.paksha} {tithi}
+        </span>
       </p>
       {vrats.length > 0 && <p className="eyebrow">{vrats.join(" · ")}</p>}
       <dl className="kv">
@@ -63,10 +67,10 @@ export default function PanchangView({ data }) {
         <Row name="Saura masa" value={data.saura_masa_name || "—"} />
         <Row name="Vikrama" value={years.vikrama} />
         <Row name="Shaka" value={years.shaka} />
-        <Row name="Sunrise" value={ist(data.sunrise)} />
-        <Row name="Sunset" value={ist(data.sunset)} />
-        <Row name="Moonrise" value={data.moonrise ? ist(data.moonrise) : "Rebuild API"} />
-        <Row name="Moonset" value={data.moonset ? ist(data.moonset) : "Rebuild API"} />
+        <Row name="Sunrise" value={<><SunUp /> {ist(data.sunrise)}</>} />
+        <Row name="Sunset" value={<><SunDown /> {ist(data.sunset)}</>} />
+        <Row name="Moonrise" value={<><MoonUp /> {data.moonrise ? ist(data.moonrise) : "—"}</>} />
+        <Row name="Moonset" value={<><MoonDown /> {data.moonset ? ist(data.moonset) : "—"}</>} />
         <Row name="Rahu Kalam" value={rahuKalam(data.sunrise, data.sunset)} />
         <Row name="Tithi starts" value={ist(data.tithi_start)} />
         <Row name="Tithi ends" value={ist(data.tithi_end)} />
