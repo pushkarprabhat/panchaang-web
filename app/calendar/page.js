@@ -11,6 +11,7 @@ import { TithiMoon } from "../sky-icons";
 import LangToggle from "../lang-toggle";
 import PersonalMarks from "../personal-marks";
 import { listRemembered, removeRemembered, saveRemembered } from "../tithi-memory";
+import CalendarCard from "./calendar-card";
 import "./calendar.css";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.panchaang.in";
@@ -219,7 +220,7 @@ export default function CalendarPage() {
               const vrats = row ? observances(row) : [];
               const cls = ["cal-cell", dowClass(year, month, c.d), ...bands.map((b) => `band-${b.id}`)].join(" ");
               return (
-                <div className={cls} key={c.key}>
+                <CalendarCard key={c.key} className={cls} href={`/day/${c.key}?city=${encodeURIComponent(city)}`}>
                   <strong className="cal-daynum">{c.d}</strong>
                   {row && (
                     <span className="cal-tithi">
@@ -236,7 +237,7 @@ export default function CalendarPage() {
                   {vrats.map((v) => <em key={v}>{v}</em>)}
                   {named.map((f) => <em key={f.name}>{f.name}{f.state ? ` (${f.state})` : ""}</em>)}
                   {ecl.map((e) => <em key={e.kind}>{e.type} {e.kind}</em>)}
-                </div>
+                </CalendarCard>
               );
             })}
           </div>
@@ -268,7 +269,7 @@ export default function CalendarPage() {
           <tbody>
             {days.map((row) => (
               <tr key={row.date}>
-                <td>{row.date}</td>
+                <td><Link href={`/day/${row.date}?city=${encodeURIComponent(city)}`}>{row.date}</Link></td>
                 <td>{pakshaMark(row.paksha)} {tithiName(row.tithi_number, row.paksha)}</td>
                 <td>{hm(row.tithi_end)}</td>
                 <td>{hm(row.sunrise)}</td>
