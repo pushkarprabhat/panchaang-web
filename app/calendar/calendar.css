@@ -31,6 +31,15 @@
   color: #9a3412;
   font-weight: 500;
 }
+.band-pitru { background: #f5f0e6; }
+.band-navratri { background: #fde8d8; }
+.band-diwali { background: #fde68a; }
+.band-label { color: #57534e; font-size: 0.65rem; }
 @media (max-width: 720px) {
   .cal-cell { min-height: 76px; padding: 0.28rem; }
+}
+@media print {
+  .topbar, header, footer, .row button, .row select, .row input { display: none !important; }
+  main { padding: 0; max-width: none; }
+  .cal-cell { min-height: 70px; break-inside: avoid; }
 }
