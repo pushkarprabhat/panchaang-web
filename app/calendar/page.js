@@ -9,6 +9,7 @@ import { eclipsesOn } from "../../data/eclipses";
 import { bandsOn, panchakMarksOn } from "../../data/bands-2026";
 import { TithiMoon } from "../sky-icons";
 import LangToggle from "../lang-toggle";
+import PersonalMarks from "../personal-marks";
 import { listRemembered, removeRemembered, saveRemembered } from "../tithi-memory";
 import "./calendar.css";
 
@@ -153,13 +154,7 @@ export default function CalendarPage() {
   function rememberRow(row) {
     const name = window.prompt("Name this tithi (birthday, shraddh, anniversary)", label || "My tithi");
     if (!name) return;
-    saveRemembered({
-      label: name,
-      city,
-      paksha: row.paksha,
-      tithi: row.tithi_number,
-      date: row.date,
-    });
+    saveRemembered({ label: name, city, paksha: row.paksha, tithi: row.tithi_number, date: row.date });
     setRemembered(listRemembered());
     setLabel("");
   }
@@ -233,6 +228,8 @@ export default function CalendarPage() {
                     </span>
                   )}
                   {row && <span className="muted cal-sun">Rise {hm(row.sunrise)} | Set {hm(row.sunset)}</span>}
+                  {row && row.tithi_end ? <span className="muted">Till {hm(row.tithi_end)}</span> : null}
+                  <PersonalMarks row={row} />
                   {row && row.saura_rashi && <span className="muted">{row.saura_rashi}{row.surya_rashi_exits ? ` to ${dayLabel(row.surya_rashi_exits)}` : ""}</span>}
                   {panchak.map((p) => <span className="band-label" key={p.label}>{p.label}</span>)}
                   {bands.filter((b) => b.id !== "panchak").map((b) => <span className="band-label" key={b.id}>{b.label}</span>)}
@@ -260,25 +257,12 @@ export default function CalendarPage() {
       </div>
 
       <p className="eyebrow" style={{ marginTop: "1.4rem" }}>Day table</p>
-      <p className="muted">End times and moon times fill in from the engine.</p>
       <div className="calendar-scroll">
         <table className="side-table day-table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Tithi</th>
-              <th>Tithi ends</th>
-              <th>Sunrise</th>
-              <th>Sunset</th>
-              <th>Moonrise</th>
-              <th>Moonset</th>
-              <th>Nakshatra</th>
-              <th>Nakshatra ends</th>
-              <th>Karana</th>
-              <th>Karana ends</th>
-              <th>Yoga</th>
-              <th>Yoga ends</th>
-              <th></th>
+              <th>Date</th><th>Tithi</th><th>Tithi ends</th><th>Sunrise</th><th>Sunset</th><th>Moonrise</th><th>Moonset</th>
+              <th>Nakshatra</th><th>Nakshatra ends</th><th>Karana</th><th>Karana ends</th><th>Yoga</th><th>Yoga ends</th><th></th>
             </tr>
           </thead>
           <tbody>
@@ -303,20 +287,7 @@ export default function CalendarPage() {
           </tbody>
         </table>
       </div>
-
-      <p className="eyebrow" style={{ marginTop: "1.4rem" }}>Remembered tithis</p>
-      {remembered.length === 0 ? <p className="muted">Save a birthday, shraddh or anniversary tithi from the day table or My Tithi.</p> : (
-        <ul>
-          {remembered.map((item) => (
-            <li key={item.id}>
-              {item.label} - {item.paksha} tithi {item.tithi} ({item.date || item.gregorian}, {item.city})
-              {" "}
-              <button type="button" onClick={() => { removeRemembered(item.id); setRemembered(listRemembered()); }}>Remove</button>
-            </li>
-          ))}
-        </ul>
-      )}
-      <p className="calendar-plans"><Link href="/my-tithi">Open My Tithi</Link> · <Link href="/pricing">Family email alerts on a plan</Link></p>
+      <p className="calendar-plans"><Link href="/my-tithi">Open My Tithi</Link></p>
     </>
   );
 }
