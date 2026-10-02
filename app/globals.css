@@ -1,38 +1,42 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap");
 
 :root {
-  --bg: #f3f1ec;
-  --card: #fffcf8;
-  --ink: #1c1917;
-  --muted: #57534e;
-  --line: #d4d0c8;
-  --control: #77716b;
-  --stone: #e9e6df;
-  --label: #625d56;
-  --accent: #24564e;
-  --accent-ink: #fffdf9;
+  --bg: #f6f1e7;
+  --card: #fffaf3;
+  --ink: #1b2838;
+  --muted: #4e5c6a;
+  --line: #e4d7c4;
+  --label: #6d5344;
+  --accent: #9a3412;
+  --accent-ink: #fffaf3;
+  --bar: #1e3a5f;
 }
 * { box-sizing: border-box; }
 html, body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 16px/1.6 "IBM Plex Sans", system-ui, sans-serif;
+  font: 16px/1.5 "IBM Plex Sans", system-ui, sans-serif;
 }
-a { color: var(--accent); text-decoration: underline; text-underline-offset: 0.18em; }
+a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 .topbar {
-  text-align: center;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding: 0.4rem 1rem;
-  border-bottom: 1px solid var(--line);
-  background: #eceae4;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  text-align: left;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: #f6f1e7;
+  padding: 0.45rem 1.25rem;
+  border-bottom: 0;
+  background: var(--bar);
 }
+.local-clock { font-variant-numeric: tabular-nums; letter-spacing: 0; }
 .site-header, .site-footer, main {
-  max-width: 1280px;
+  max-width: 960px;
   margin: 0 auto;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
@@ -40,12 +44,12 @@ a:hover { text-decoration: underline; }
 .site-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   gap: 1rem;
   flex-wrap: wrap;
   padding-top: 1.1rem;
   padding-bottom: 1.1rem;
-  border-bottom: 1px solid var(--ink);
+  border-bottom: 2px solid var(--bar);
 }
 .brand {
   font-family: "IBM Plex Serif", Georgia, serif;
@@ -62,8 +66,8 @@ nav a:hover { color: var(--accent); text-decoration: none; }
 .lang-btn {
   background: transparent;
   color: var(--ink);
-  border: 1px solid var(--control);
-  border-radius: 2px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
   font-weight: 500;
@@ -75,7 +79,7 @@ main { padding-top: 2rem; padding-bottom: 4rem; }
   border-radius: 2px;
   padding: 1.35rem 1.4rem;
 }
-.featured { border-color: var(--ink); }
+.featured { border-color: var(--bar); }
 .grid { display: grid; gap: 1rem; }
 @media (min-width: 720px) {
   .grid.two { grid-template-columns: 1fr 1fr; }
@@ -94,7 +98,7 @@ h2 { font-family: "IBM Plex Serif", Georgia, serif; margin-top: 2rem; font-weigh
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-size: 0.68rem;
-  color: var(--label);
+  color: var(--accent);
   margin: 0 0 0.4rem;
   font-weight: 600;
 }
@@ -103,7 +107,7 @@ h2 { font-family: "IBM Plex Serif", Georgia, serif; margin-top: 2rem; font-weigh
 .muted { color: var(--muted); }
 .price { font-size: 1.5rem; font-weight: 600; margin: 0.3rem 0 0.8rem; }
 button, .btn {
-  background: var(--ink);
+  background: var(--bar);
   color: var(--accent-ink);
   border: 0;
   border-radius: 2px;
@@ -119,11 +123,11 @@ ul { padding-left: 1.1rem; }
 table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 td, th { border-bottom: 1px solid var(--line); padding: 0.5rem 0.2rem; text-align: left; vertical-align: top; }
 th { color: var(--label); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
-pre { background: #f5f5f4; padding: 0.8rem; border-radius: 2px; overflow: auto; font-size: 0.8rem; }
+pre { background: #f3eadc; padding: 0.8rem; border-radius: 2px; overflow: auto; font-size: 0.8rem; }
 input, select {
   background: #fff;
   color: var(--ink);
-  border: 1px solid var(--control);
+  border: 1px solid #d6c8b4;
   border-radius: 2px;
   padding: 0.45rem 0.6rem;
   font: inherit;
@@ -131,7 +135,7 @@ input, select {
 .suggest { list-style: none; margin: 0.4rem 0 0; padding: 0; border: 1px solid var(--line); max-height: 240px; overflow: auto; background: #fff; }
 .suggest li { border-bottom: 1px solid var(--line); }
 .suggest-btn { width: 100%; text-align: left; background: transparent; color: var(--ink); border: 0; border-radius: 0; font-weight: 400; padding: 0.5rem 0.7rem; }
-.suggest-btn:hover { background: #f5f5f4; }
+.suggest-btn:hover { background: #f6f1e7; }
 .panchang-hero {
   margin: 0.35rem 0 1rem;
   font-size: 1.45rem;
@@ -146,11 +150,8 @@ input, select {
   margin: 0;
   border-top: 1px solid var(--line);
 }
-.kv > div {
-  display: contents;
-}
-.kv dt,
-.kv dd {
+.kv > div { display: contents; }
+.kv dt, .kv dd {
   margin: 0;
   padding: 0.55rem 0;
   border-bottom: 1px solid var(--line);
@@ -159,14 +160,10 @@ input, select {
   color: var(--label);
   font-size: 0.78rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
 }
-.kv dd {
-  font-variant-numeric: tabular-nums;
-  font-weight: 500;
-}
+.kv dd { font-variant-numeric: tabular-nums; font-weight: 500; }
 .site-footer {
-  border-top: 1px solid var(--ink);
+  border-top: 2px solid var(--bar);
   padding-top: 1.75rem;
   padding-bottom: 2rem;
   margin-top: 0.5rem;
@@ -180,18 +177,18 @@ input, select {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-size: 0.68rem;
-  color: var(--label);
+  color: var(--accent);
   margin: 0 0 0.45rem;
   font-weight: 600;
 }
 .footer-meta { margin-top: 1.4rem; font-size: 0.82rem; }
-
-/* Public service layout: paper, ink and restrained green accents. */
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .skip-link { position: fixed; top: -5rem; left: 1rem; z-index: 100; background: var(--card); padding: 0.75rem 1rem; }
 .skip-link:focus { top: 1rem; }
+.site-header, .site-footer, main { max-width: 1100px; }
+.site-header { align-items: center; }
 .site-header nav { gap: 0.85rem; }
-.auth-action .lang-btn { background: var(--ink); color: var(--card); padding: 0.55rem 0.9rem; }
+.auth-action .lang-btn { background: var(--bar); color: var(--card); padding: 0.55rem 0.9rem; }
 .journey { list-style: none; display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; padding: 1rem 0; margin: 1.5rem 0; border-block: 1px solid var(--line); font-size: 0.85rem; }
 .journey a { font-weight: 500; }
 .today-card { border-top: 3px solid var(--accent); padding: clamp(1rem, 3vw, 2rem); scroll-margin-top: 1rem; }
@@ -220,10 +217,10 @@ input, select {
 .plan-card li { margin-bottom: 0.6rem; }
 .plan-card .btn { text-align: center; }
 .plan-card.featured { border-color: var(--accent); border-top-width: 3px; }
-.site-footer { background: var(--card); }
+.site-footer { background: #fffaf3; }
 .footer-grid .brand { margin-top: 0; }
 .footer-grid .muted { font-size: 0.85rem; line-height: 1.7; }
-button:disabled { background: var(--stone); color: var(--muted); cursor: not-allowed; }
+button:disabled { opacity: 0.5; cursor: wait; }
 @media (max-width: 719px) {
   .site-header nav { gap: 0.6rem 1rem; }
   .site-header nav a { padding-block: 0.25rem; }
@@ -231,54 +228,4 @@ button:disabled { background: var(--stone); color: var(--muted); cursor: not-all
   .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .footer-grid > :first-child { grid-column: 1 / -1; }
   .today-actions .btn { width: 100%; text-align: center; }
-}
-
-/* Reference almanac: readable measures, consistent controls, no colour-only links. */
-.brand img { display: block; width: 234px; height: auto; max-width: 100%; }
-.site-header .brand { flex-shrink: 0; }
-.site-header nav a { display: inline-flex; align-items: center; min-height: 36px; }
-.site-header nav a:hover { text-decoration: underline; }
-button, input, select, .btn { min-height: 40px; min-width: 24px; max-width: 100%; }
-button, input, select { font-family: inherit; }
-input::placeholder { color: var(--muted); opacity: 1; }
-.language-control { display: inline-flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; color: var(--muted); font-size: 0.8rem; }
-.language-control select { background: var(--card); color: var(--ink); min-width: 6.5rem; }
-.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
-main > p:not(.row, .calendar-caption), main > ul, article { max-width: 65ch; }
-.journey a { display: inline-flex; align-items: center; min-height: 28px; }
-.footer-grid a { min-height: 28px; overflow-wrap: anywhere; }
-.footer-meta { border-top: 1px solid var(--line); padding-top: 1rem; }
-.today-card { max-width: 58rem; }
-.panchang-full { min-width: 0; }
-.panchang-full .eyebrow { font-size: 0.75rem; }
-.table-scroll { overflow-x: auto; max-width: 100%; margin-block: 0.5rem 1.5rem; }
-.table-scroll table { min-width: 34rem; }
-.table-scroll th { white-space: nowrap; }
-.table-scroll th, .table-scroll td { padding: 0.65rem 0.75rem; }
-.table-scroll thead { background: var(--stone); }
-.table-scroll tbody tr:nth-child(even) { background: var(--bg); }
-.table-scroll:focus-visible, .suggest-btn:focus-visible { outline-offset: -3px; }
-@media (max-width: 479px) {
-  .site-header, .site-footer, main { padding-inline: 1rem; }
-  .footer-grid { grid-template-columns: 1fr; }
-  .site-header nav { gap: 0.5rem 1rem; }
-  .kv { grid-template-columns: minmax(5rem, 36%) minmax(0, 1fr); }
-  .kv dt { overflow-wrap: anywhere; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
-}
-@media (forced-colors: active) {
-  button, .btn { border: 1px solid ButtonText; }
-  :focus-visible { outline-color: Highlight; }
-}
-@media print {
-  .topbar, .site-header, .site-footer, .skip-link, .journey, .today-actions, .next-step, .location-button { display: none !important; }
-  body { background: white; color: black; }
-  main { padding: 0; max-width: none; }
-  .card { border: 0; padding: 0; }
-  .table-scroll { overflow: visible; }
-  .table-scroll table { min-width: 0; }
-  thead { display: table-header-group; }
-  tr { break-inside: avoid; }
 }

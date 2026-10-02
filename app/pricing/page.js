@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FAMILY, TEMPLE } from "../../data/plans";
+import { ADDONS, FAMILY, TEMPLE } from "../../data/plans";
 
 function Grid({ title, plans }) {
   return (
@@ -19,9 +19,7 @@ function Grid({ title, plans }) {
                 <li key={i}>{i}</li>
               ))}
             </ul>
-            <Link className="btn" href={p.id === "free" ? p.href : "/contact"}>
-              {p.id === "free" ? p.cta : `Enquire about ${p.name}`}
-            </Link>
+            <Link className="btn" href={p.href}>{p.cta}</Link>
           </div>
         ))}
       </div>
@@ -32,13 +30,35 @@ function Grid({ title, plans }) {
 export default function PricingPage() {
   return (
     <>
-      <p className="eyebrow">Plans & pricing</p>
-      <h1>Choose what fits your routine.</h1>
-      <p className="lead">Start with today’s panchang, free. Explore annual family plans or monthly services for your temple or trust.</p>
-      <p className="pricing-note">Online payments are not yet available. <Link href="/contact">Contact us</Link> to enquire about a paid plan.</p>
-      <Grid title="Families" plans={FAMILY} />
-      <Grid title="Temples" plans={TEMPLE} />
-      <p className="row"><Link href="/compare">Compare services →</Link><Link href="/legal/refund">Refund policy</Link><Link href="/legal/terms">Terms of service</Link></p>
+      <p className="eyebrow">Plans</p>
+      <h1>Five plans. Add only what you need.</h1>
+      <p className="lead">
+        Home and mandir are billed once a year. Add-ons are optional extras on top of a paid plan.
+      </p>
+      <p className="pricing-note">No cards yet. <Link href="/contact">Write to us</Link> with the plan and any add-on.</p>
+      <Grid title="Home" plans={FAMILY} />
+      <Grid title="Mandir" plans={TEMPLE} />
+      <h2>Add-ons</h2>
+      <div className="card">
+        <table>
+          <thead>
+            <tr><th>Add-on</th><th>Price</th><th></th></tr>
+          </thead>
+          <tbody>
+            {ADDONS.map((a) => (
+              <tr key={a.id}>
+                <td>
+                  <strong>{a.name}</strong>
+                  <div className="muted">{a.note}</div>
+                </td>
+                <td>{a.price}</td>
+                <td><Link href="/contact">Ask</Link></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="row"><Link href="/compare">Compare</Link> <Link href="/legal/refund">Refund</Link></p>
     </>
   );
 }

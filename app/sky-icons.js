@@ -1,8 +1,12 @@
+"use client";
+
+import { useId } from "react";
+
 export function SunUp() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-      <circle cx="8" cy="9" r="3.2" fill="#24564e" />
-      <path d="M8 2v2M8 12v2M2 9h2M12 9h2M3.8 4.8l1.4 1.4M10.8 11.8l1.4 1.4M3.8 13.2l1.4-1.4M10.8 6.2l1.4-1.4" stroke="#24564e" strokeWidth="1.2" />
+      <circle cx="8" cy="9" r="3.2" fill="#b45309" />
+      <path d="M8 2v2M8 12v2M2 9h2M12 9h2M3.8 4.8l1.4 1.4M10.8 11.8l1.4 1.4M3.8 13.2l1.4-1.4M10.8 6.2l1.4-1.4" stroke="#b45309" strokeWidth="1.2" />
     </svg>
   );
 }
@@ -10,8 +14,8 @@ export function SunUp() {
 export function SunDown() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-      <path d="M2 12h12" stroke="#24564e" strokeWidth="1.4" />
-      <path d="M4 12a4 4 0 0 1 8 0" fill="#24564e" />
+      <path d="M2 12h12" stroke="#7c2d12" strokeWidth="1.4" />
+      <path d="M4 12a4 4 0 0 1 8 0" fill="#c2410c" />
     </svg>
   );
 }
@@ -33,21 +37,27 @@ export function MoonDown() {
   );
 }
 
+/** One disc. Gold = lit face. Shadow circle slides with tithi. */
 export function TithiMoon({ tithi = 1, paksha = "Shukla", size = 28 }) {
+  const uid = useId().replace(/:/g, "");
   const n = Math.min(15, Math.max(1, Number(tithi) || 1));
   const wax = paksha !== "Krishna";
-  const illum = wax ? n / 15 : (15 - n) / 15;
+  const k = wax ? n / 15 : (15 - n) / 15;
   const label = n === 15 ? (wax ? "Purnima" : "Amavasya") : `${paksha} ${n}`;
-  const shadeX = wax ? 16 - illum * 20 : 16 + illum * 20;
+  const shadowCx = wax ? 16 - k * 26 : 16 + k * 26;
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" role="img" aria-label={label}>
-      <circle cx="16" cy="16" r="13" fill="#fffcf8" stroke="#44403c" strokeWidth="1.4" />
-      {!(n === 15 && wax) && (
-        <circle cx={shadeX} cy="16" r="13" fill="#1c1917" />
-      )}
-      {n === 15 && !wax && (
-        <circle cx="16" cy="16" r="13" fill="#1c1917" stroke="#78716c" strokeWidth="1.4" />
-      )}
+    <svg width={size} height={size} viewBox="0 0 32 32" aria-label={label}>
+      <defs>
+        <clipPath id={`moon${uid}`}>
+          <circle cx="16" cy="16" r="12" />
+        </clipPath>
+      </defs>
+      <circle cx="16" cy="16" r="12" fill="#1c1917" stroke="#44403c" strokeWidth="1.2" />
+      <g clipPath={`url(#moon${uid})`}>
+        <circle cx="16" cy="16" r="12" fill="#f3e0a8" />
+        {k < 0.97 && <circle cx={shadowCx} cy="16" r="12" fill="#1c1917" />}
+        {k < 0.04 && <circle cx="16" cy="16" r="12" fill="#1c1917" />}
+      </g>
     </svg>
   );
 }

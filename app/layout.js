@@ -1,8 +1,10 @@
 import "./globals.css";
+import "./theme.css";
 import Link from "next/link";
 import LangToggle from "./lang-toggle";
 import Providers from "./providers";
 import AuthBar from "./auth-bar";
+import LocalClock from "./local-clock";
 
 export const metadata = {
   title: "Panchaang.in — daily panchang",
@@ -15,7 +17,10 @@ export default function RootLayout({ children }) {
       <body>
         <Providers>
           <a className="skip-link" href="#main-content">Skip to content</a>
-          <div className="topbar">TheiaOne AI Systems LLP · Panchaang.in</div>
+          <div className="topbar">
+            <span>TheiaOne AI Systems LLP</span>
+            <LocalClock />
+          </div>
           <header className="site-header">
             <Link href="/" className="brand">
               <img src="/logo.svg" width="260" height="44" alt="Panchaang.in" />
@@ -23,10 +28,12 @@ export default function RootLayout({ children }) {
             <nav aria-label="Primary">
               <Link href="/">Today</Link>
               <Link href="/calendar">Month</Link>
+              <Link href="/my-tithi">My Tithi</Link>
               <Link href="/festivals">Forthcoming</Link>
               <Link href="/eclipses">Eclipses</Link>
               <Link href="/tools">Tools</Link>
               <Link href="/pricing">Plans</Link>
+              <Link href="/account">Account</Link>
               <LangToggle />
               <span className="auth-action"><AuthBar /></span>
             </nav>
@@ -46,6 +53,7 @@ export default function RootLayout({ children }) {
                 <p className="footer-label">Your calendar</p>
                 <Link href="/">Today</Link>
                 <Link href="/calendar">Month</Link>
+                <Link href="/my-tithi">My Tithi</Link>
                 <Link href="/festivals">Forthcoming</Link>
                 <Link href="/eclipses">Eclipses</Link>
                 <Link href="/tools">Converters</Link>
@@ -56,12 +64,14 @@ export default function RootLayout({ children }) {
                 <Link href="/about">About</Link>
                 <Link href="/contact">Contact</Link>
                 <Link href="/services">Services</Link>
-                <Link href="/pricing">Plans & pricing</Link>
-                <Link href="/compare">Compare</Link>
+                <Link href="/pricing">Plans</Link>
+                <Link href="/account">Account</Link>
+                <Link href="/hold">Hold list</Link>
                 <Link href="/api-docs">API</Link>
               </div>
               <div>
                 <p className="footer-label">Legal</p>
+                <Link href="/legal">Legal</Link>
                 <Link href="/legal/terms">Terms</Link>
                 <Link href="/legal/privacy">Privacy</Link>
                 <Link href="/legal/refund">Refund</Link>

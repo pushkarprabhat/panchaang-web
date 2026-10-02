@@ -1,59 +1,66 @@
-.calendar-toolbar { padding: 1rem; background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--accent); }
-.calendar-caption { font-family: "IBM Plex Serif", Georgia, serif; font-size: 1.4rem; margin-block: 1.5rem 0.75rem; }
-.calendar-board { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; width: 100%; align-items: start; }
-.calendar-scroll { overflow-x: auto; width: 100%; min-width: 0; }
-.calendar-scroll:focus-visible { outline-offset: -3px; }
-.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); min-width: 770px; }
-.cal-h { font-size: 0.75rem; font-weight: 600; color: var(--muted); background: var(--stone); padding: 0.65rem 0.5rem; text-transform: uppercase; letter-spacing: 0.06em; }
-.cal-cell { background: var(--card); min-height: 132px; padding: 0.6rem 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.78rem; line-height: 1.4; overflow-wrap: anywhere; }
-.cal-cell.empty { background: var(--bg); }
-.cal-cell em { font-style: normal; color: var(--accent); font-weight: 600; }
-.cal-date { display: flex; justify-content: space-between; gap: 0.3rem; align-items: baseline; }
-.cal-daynum { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
-.weekend-label { font-size: 0.65rem; font-weight: 600; color: var(--muted); }
-.cal-tithi { display: flex; align-items: center; gap: 0.3rem; font-weight: 500; }
-.cal-tithi svg { flex-shrink: 0; }
-.cal-sun, .band-label { font-size: 0.7rem; color: var(--muted); }
-.dow-sun { background: #f1e7e3; }
-.dow-sat { background: #eeece7; }
-.dow-sat-off { background: #dedad2; }
-.band-pitru, .band-navratri, .band-diwali { box-shadow: inset 0 3px var(--control); }
-.band-panchak { box-shadow: inset 0 3px var(--accent); }
-.band-panchak .band-label { font-weight: 600; }
-.calendar-side { min-width: 0; padding: 1rem; border: 1px solid var(--line); background: var(--card); }
-.reference-heading { font-size: 1.15rem; margin: 1.5rem 0 0.75rem; }
-.calendar-side .reference-heading { margin-top: 0; }
-.side-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
-.side-table th, .side-table td { padding: 0.6rem 0.4rem; text-align: left; overflow-wrap: anywhere; }
-.side-table thead { background: var(--stone); }
-.side-table th { color: var(--muted); font-size: 0.7rem; }
-.side-table tbody tr:nth-child(even) { background: var(--bg); }
-.calendar-side .side-table { table-layout: fixed; }
-.day-table { min-width: 960px; }
-.calendar-legend { font-size: 0.85rem; max-width: 65ch; margin-top: 1.5rem; border-top: 1px solid var(--line); padding-top: 0.5rem; }
-.calendar-legend li { margin: 0.35rem 0; }
-@media (min-width: 1200px) {
-  .calendar-board { grid-template-columns: minmax(0, 1fr) 19rem; }
+.cal {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: #e7e5e4;
+  border: 1px solid #e7e5e4;
+  margin-top: 1rem;
 }
-@page { size: A4 landscape; margin: 10mm; }
+.cal-h {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: left;
+  color: #78716c;
+  background: #f3f1ec;
+  padding: 0.4rem 0.45rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cal-cell {
+  background: #fffcf8;
+  min-height: 118px;
+  padding: 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  font-size: 0.72rem;
+}
+.cal-cell.empty { background: #f3f1ec; }
+.cal-cell em { font-style: normal; color: #9a3412; font-weight: 500; }
+.cal-cell em.mine { color: #0f766e; font-weight: 650; }
+.cal-tithi { display: flex; align-items: center; gap: 0.35rem; }
+.cal-sun { font-size: 0.65rem; }
+.dow-sun { background: #fce7e7; }
+.dow-sat { background: #eef2f6; }
+.dow-sat-off { background: #d6dee8; }
+.band-pitru { box-shadow: inset 0 0 0 2px #d6c7a8; }
+.band-navratri { box-shadow: inset 0 0 0 2px #fdba74; }
+.band-diwali { box-shadow: inset 0 0 0 2px #eab308; }
+.band-panchak { box-shadow: inset 0 0 0 2px #0f766e; }
+.band-label { color: #57534e; font-size: 0.65rem; }
+.calendar-legend { font-size: 0.85rem; max-width: 48rem; margin-top: 1.2rem; }
+.calendar-legend ul { padding-left: 1.1rem; }
+.calendar-legend li { margin: 0.25rem 0; }
+.calendar-board {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+.calendar-side { width: 100%; max-width: 52rem; }
+.side-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+.side-table th, .side-table td { border-bottom: 1px solid #e7e5e4; padding: 0.35rem 0.4rem; text-align: left; }
+.day-table { min-width: 960px; }
+@media (max-width: 720px) {
+  .cal-cell { min-height: 88px; padding: 0.28rem; }
+}
+.calendar-toolbar { padding: 1rem; background: var(--card); border: 1px solid var(--line); }
+.calendar-caption { font-family: "IBM Plex Serif", Georgia, serif; font-size: 1.2rem; }
+.calendar-scroll { overflow-x: auto; width: 100%; }
+.calendar-scroll .cal { min-width: 720px; margin-top: 0; }
 @media print {
-  .calendar-toolbar, .calendar-plans { display: none !important; }
-  h1 { font-size: 18pt; }
-  main > .lead { font-size: 9pt; margin-block: 4pt; }
-  .calendar-caption { font-size: 13pt; margin-block: 8pt; }
-  .calendar-board { display: block; }
+  .calendar-toolbar, .calendar-plans, .skip-link, header, footer, .topbar { display: none !important; }
   .calendar-scroll { overflow: visible; }
-  .cal { min-width: 0; width: 100%; }
-  .cal-h { font-size: 8pt; padding: 3pt; }
-  .cal-cell { min-height: 0; padding: 4pt; gap: 2pt; font-size: 8pt; break-inside: avoid; }
-  .cal-sun, .band-label, .weekend-label { font-size: 7pt; }
-  .cal-daynum { font-size: 11pt; }
-  .cal-tithi svg { width: 16px; height: 16px; }
-  .calendar-side { margin-top: 12pt; break-inside: avoid; }
-  .day-table { min-width: 0; table-layout: fixed; }
-  .side-table { font-size: 8pt; }
-  .side-table th, .side-table td { font-size: 8pt; padding: 4pt; }
-  .reference-heading { break-after: avoid; }
-  .calendar-legend { break-inside: avoid; }
-  .cal-cell, .cal-h, .side-table { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .calendar-scroll .cal { min-width: 0; }
+  .cal-cell { break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
 }
