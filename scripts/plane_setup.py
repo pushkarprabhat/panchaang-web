@@ -1,7 +1,7 @@
 """Create Plane projects from docs/lifecycle/plane-project.json.
 
 The key file is the parent folder, not this repo:
-  D:\TheiaOne_Programs\Projects\Panchaang-Engine\.env.plane
+  D:/TheiaOne_Programs/Projects/Panchaang-Engine/.env.plane
 
   python scripts/plane_setup.py
   python scripts/plane_setup.py --all
@@ -40,6 +40,7 @@ def api(method, url, payload=None):
     req = urllib.request.Request(url, data=data, method=method)
     req.add_header("X-API-Key", os.environ["PLANE_API_KEY"])
     req.add_header("Content-Type", "application/json")
+    req.add_header("User-Agent", "Mozilla/5.0")
     try:
         with urllib.request.urlopen(req) as res:
             body = res.read().decode()
@@ -104,8 +105,7 @@ def choose(projects, args):
         return [{"project": name, "identifier": ident, "import_csv": ""}]
     if raw == str(len(projects) + 1):
         return projects
-    picked = projects[int(raw) - 1]
-    return [picked]
+    return [projects[int(raw) - 1]]
 
 
 def main():
