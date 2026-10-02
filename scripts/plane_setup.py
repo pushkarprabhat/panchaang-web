@@ -35,7 +35,7 @@ def load_key(spec):
     return key_file
 
 
-def api(method, url, payload=None):
+def api(method, url, payload=None, allow=(409,)):
     data = None if payload is None else json.dumps(payload).encode()
     req = urllib.request.Request(url, data=data, method=method)
     req.add_header("X-API-Key", os.environ["PLANE_API_KEY"])
@@ -47,16 +47,32 @@ def api(method, url, payload=None):
             return json.loads(body) if body else {}
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode()
+        if exc.code in allow:
+            try:
+                return json.loads(detail)
+            except json.JSONDecodeError:
+                return {"exists": True}
         raise SystemExit(f"{method} {url} failed: {exc.code} {detail}") from exc
 
 
-def create_project(base, workspace, spec, chosen):
+def project_id(base, workspace, chosen):
     root = f"{base}/api/v1/workspaces/{workspace}"
-    project = api("POST", f"{root}/projects/", {
+    created = api("POST", f"{root}/projects/", {
         "name": chosen["project"],
         "identifier": chosen["identifier"],
     })
-    pid = project["id"]
+    if created.get("id"):
+        return created["id"], root
+    found = api("GET", f"{root}/projects/")
+    rows = found.get("results", found if isinstance(found, list) else [])
+    for row in rows:
+        if row.get("identifier") == chosen["identifier"] or row.get("name") == chosen["project"]:
+            return row["id"], root
+    raise SystemExit(f"Could not find {chosen['project']} after it already existed")
+
+
+def create_project(base, workspace, spec, chosen):
+    pid, root = project_id(base, workspace, chosen)
     print(f"project {chosen['project']} {pid}")
     for i, name in enumerate(spec["states"], start=1):
         group = "backlog"
