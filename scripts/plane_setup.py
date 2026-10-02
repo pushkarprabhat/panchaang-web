@@ -1,10 +1,13 @@
-"""Create one Plane project from docs/lifecycle/plane-project.json.
+"""Create Plane projects from docs/lifecycle/plane-project.json.
 
-Key is read from the environment, or from .env.plane in this repo.
-.env.plane is gitignored. Do not commit it.
+The key file is the parent folder, not this repo:
+  D:\TheiaOne_Programs\Projects\Panchaang-Engine\.env.plane
 
   python scripts/plane_setup.py
+  python scripts/plane_setup.py --all
+  python scripts/plane_setup.py --name "Manekbaba"
 """
+import argparse
 import csv
 import json
 import os
@@ -15,18 +18,21 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INSTRUCTION = ROOT / "docs" / "lifecycle" / "plane-project.json"
-ENV_FILE = ROOT / ".env.plane"
 
 
-def load_env_file():
-    if not ENV_FILE.exists():
-        return
-    for line in ENV_FILE.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip().strip('"'))
+def load_key(spec):
+    key_file = (ROOT / spec.get("key_file", "../.env.plane")).resolve()
+    if key_file.exists():
+        for line in key_file.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip('"'))
+    missing = [k for k in ("PLANE_API_KEY", "PLANE_WORKSPACE") if not os.environ.get(k)]
+    if missing:
+        raise SystemExit(f"Missing {', '.join(missing)} in {key_file}")
+    return key_file
 
 
 def api(method, url, payload=None):
@@ -43,21 +49,14 @@ def api(method, url, payload=None):
         raise SystemExit(f"{method} {url} failed: {exc.code} {detail}") from exc
 
 
-def main():
-    load_env_file()
-    missing = [k for k in ("PLANE_API_KEY", "PLANE_WORKSPACE") if not os.environ.get(k)]
-    if missing:
-        raise SystemExit("Missing " + ", ".join(missing) + ". Put them in .env.plane")
-    spec = json.loads(INSTRUCTION.read_text(encoding="utf-8"))
-    base = os.environ.get("PLANE_BASE", "https://api.plane.so").rstrip("/")
-    workspace = os.environ["PLANE_WORKSPACE"]
+def create_project(base, workspace, spec, chosen):
     root = f"{base}/api/v1/workspaces/{workspace}"
     project = api("POST", f"{root}/projects/", {
-        "name": spec["project"],
-        "identifier": spec["identifier"],
+        "name": chosen["project"],
+        "identifier": chosen["identifier"],
     })
     pid = project["id"]
-    print(f"project {spec['project']} {pid}")
+    print(f"project {chosen['project']} {pid}")
     for i, name in enumerate(spec["states"], start=1):
         group = "backlog"
         if name == "Done":
@@ -67,10 +66,7 @@ def main():
         elif name == "In Progress":
             group = "started"
         api("POST", f"{root}/projects/{pid}/states/", {
-            "name": name,
-            "color": "#16324f",
-            "group": group,
-            "sequence": i,
+            "name": name, "color": "#16324f", "group": group, "sequence": i,
         })
         print(f"state {name}")
     for name in spec["labels"]:
@@ -79,8 +75,8 @@ def main():
     for name in spec.get("modules", []):
         api("POST", f"{root}/projects/{pid}/modules/", {"name": name})
         print(f"module {name}")
-    csv_path = ROOT / spec.get("import_csv", "")
-    if csv_path.exists():
+    csv_path = ROOT / chosen.get("import_csv", "")
+    if chosen.get("import_csv") and csv_path.exists():
         with csv_path.open(encoding="utf-8") as handle:
             for row in csv.DictReader(handle):
                 api("POST", f"{root}/projects/{pid}/issues/", {
@@ -88,6 +84,41 @@ def main():
                     "description_html": f"<p>{row.get('Notes', '')}</p>",
                 })
                 print(f"item {row['Name']}")
+
+
+def choose(projects, args):
+    if args.name:
+        ident = "".join(ch for ch in args.name.upper() if ch.isalnum())[:5] or "PROJ"
+        return [{"project": args.name, "identifier": ident, "import_csv": ""}]
+    if args.all:
+        return projects
+    print("Create which Plane project?")
+    for i, item in enumerate(projects, start=1):
+        print(f"  {i}. {item['project']}")
+    print(f"  {len(projects) + 1}. both")
+    print("  0. type a new name")
+    raw = input("Number: ").strip()
+    if raw == "0":
+        name = input("Project name: ").strip()
+        ident = "".join(ch for ch in name.upper() if ch.isalnum())[:5] or "PROJ"
+        return [{"project": name, "identifier": ident, "import_csv": ""}]
+    if raw == str(len(projects) + 1):
+        return projects
+    picked = projects[int(raw) - 1]
+    return [picked]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--all", action="store_true")
+    parser.add_argument("--name")
+    args = parser.parse_args()
+    spec = json.loads(INSTRUCTION.read_text(encoding="utf-8"))
+    key_file = load_key(spec)
+    print(f"key file {key_file}")
+    base = os.environ.get("PLANE_BASE", "https://api.plane.so").rstrip("/")
+    for chosen in choose(spec["projects"], args):
+        create_project(base, os.environ["PLANE_WORKSPACE"], spec, chosen)
     print("done")
 
 
