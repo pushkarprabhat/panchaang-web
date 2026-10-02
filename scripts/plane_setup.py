@@ -51,7 +51,7 @@ def api(method, url, payload=None, allow=(409,)):
             try:
                 return json.loads(detail)
             except json.JSONDecodeError:
-                return {"exists": True}
+                return {"exists": True, "detail": detail}
         raise SystemExit(f"{method} {url} failed: {exc.code} {detail}") from exc
 
 
@@ -74,6 +74,7 @@ def project_id(base, workspace, chosen):
 def create_project(base, workspace, spec, chosen):
     pid, root = project_id(base, workspace, chosen)
     print(f"project {chosen['project']} {pid}")
+    api("PATCH", f"{root}/projects/{pid}/", {"module_view": True}, allow=(400, 409))
     for i, name in enumerate(spec["states"], start=1):
         group = "backlog"
         if name == "Done":
@@ -89,8 +90,15 @@ def create_project(base, workspace, spec, chosen):
     for name in spec["labels"]:
         api("POST", f"{root}/projects/{pid}/labels/", {"name": name, "color": "#c2410c"})
         print(f"label {name}")
+    modules_on = True
     for name in spec.get("modules", []):
-        api("POST", f"{root}/projects/{pid}/modules/", {"name": name})
+        if not modules_on:
+            break
+        made = api("POST", f"{root}/projects/{pid}/modules/", {"name": name}, allow=(400, 409))
+        if "not enabled" in json.dumps(made).lower():
+            print("modules skipped, turn them on in Plane project settings")
+            modules_on = False
+            continue
         print(f"module {name}")
     csv_path = ROOT / chosen.get("import_csv", "")
     if chosen.get("import_csv") and csv_path.exists():
