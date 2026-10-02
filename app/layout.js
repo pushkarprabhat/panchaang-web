@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
           <div className="topbar">TheiaOne AI Systems LLP · Panchaang.in</div>
           <header className="site-header">
             <Link href="/" className="brand">
-              Panchaang<span>.in</span>
+              <img src="/logo.svg" width="260" height="44" alt="Panchaang.in" />
             </Link>
             <nav aria-label="Primary">
               <Link href="/">Today</Link>
@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
               <span className="auth-action"><AuthBar /></span>
             </nav>
           </header>
-          <main id="main-content">{children}</main>
+          <main id="main-content" tabIndex={-1}>{children}</main>
           <footer className="site-footer">
             <div className="footer-grid">
               <div>

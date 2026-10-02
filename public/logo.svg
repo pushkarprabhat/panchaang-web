@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 44" role="img" aria-labelledby="title">
+  <title id="title">Panchaang.in</title>
+  <circle cx="22" cy="22" r="20" fill="#24564e"/>
+  <path d="M22 6a16 16 0 0 1 0 32Z" fill="#fffcf8"/>
+  <text x="54" y="32" fill="#24564e" font-family="Georgia, serif" font-size="30" letter-spacing="-1">Panchaang.in</text>
+</svg>
