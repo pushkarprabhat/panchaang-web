@@ -3,6 +3,7 @@ import Link from "next/link";
 import LangToggle from "./lang-toggle";
 import Providers from "./providers";
 import AuthBar from "./auth-bar";
+import LocalClock from "./local-clock";
 
 export const metadata = {
   title: "Panchaang.in — daily panchang",
@@ -15,7 +16,10 @@ export default function RootLayout({ children }) {
       <body>
         <Providers>
           <a className="skip-link" href="#main-content">Skip to content</a>
-          <div className="topbar">TheiaOne AI Systems LLP · Panchaang.in</div>
+          <div className="topbar">
+            <span>TheiaOne AI Systems LLP</span>
+            <LocalClock />
+          </div>
           <header className="site-header">
             <Link href="/" className="brand">
               Panchaang<span>.in</span>
@@ -64,6 +68,7 @@ export default function RootLayout({ children }) {
               </div>
               <div>
                 <p className="footer-label">Legal</p>
+                <Link href="/legal">Legal</Link>
                 <Link href="/legal/terms">Terms</Link>
                 <Link href="/legal/privacy">Privacy</Link>
                 <Link href="/legal/refund">Refund</Link>
