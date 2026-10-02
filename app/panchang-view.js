@@ -73,7 +73,7 @@ export default function PanchangView({ data }) {
   const isPurnima = data.tithi_number === 15 && data.paksha === "Shukla";
   const planets = Array.isArray(data.planets) ? data.planets : [];
   return (
-    <div className="panchang-full">
+    <div className="panchang-full" lang={lang}>
       <p className="muted" style={{ margin: "0.6rem 0 0" }}>
         {gregorianLine(when, lang)}
       </p>
@@ -106,45 +106,51 @@ export default function PanchangView({ data }) {
         <Row name={isPurnima ? "Purnima ends" : "Tithi ends"} value={ist(data.tithi_end)} />
       </dl>
       <p className="eyebrow" style={{ marginTop: "1.2rem" }}>{t(lang, "limbs")}</p>
-      <table>
-        <thead>
-          <tr><th>Limb</th><th>Name</th><th>Start \u2013 end</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Tithi</td><td>{tithi}</td><td>{ist(data.tithi_start)} \u2013 {ist(data.tithi_end)}</td></tr>
-          <tr><td>Nakshatra</td><td>{data.nakshatra?.name || nakshatraName(data.nakshatra_index, hi)}</td><td>{win(data.nakshatra)}</td></tr>
-          <tr><td>Yoga</td><td>{data.yoga?.name || yogaName(data.yoga_index)}</td><td>{win(data.yoga)}</td></tr>
-          <tr><td>Karana</td><td>{data.karana?.name || karanaName(data.karana_index)}</td><td>{win(data.karana)}</td></tr>
-        </tbody>
-      </table>
+      <div className="table-scroll" role="region" aria-label="Limb times" tabIndex={0}>
+        <table>
+          <thead>
+            <tr><th scope="col">Limb</th><th scope="col">Name</th><th scope="col">Start \u2013 end</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Tithi</td><td>{tithi}</td><td>{ist(data.tithi_start)} \u2013 {ist(data.tithi_end)}</td></tr>
+            <tr><td>Nakshatra</td><td>{data.nakshatra?.name || nakshatraName(data.nakshatra_index, hi)}</td><td>{win(data.nakshatra)}</td></tr>
+            <tr><td>Yoga</td><td>{data.yoga?.name || yogaName(data.yoga_index)}</td><td>{win(data.yoga)}</td></tr>
+            <tr><td>Karana</td><td>{data.karana?.name || karanaName(data.karana_index)}</td><td>{win(data.karana)}</td></tr>
+          </tbody>
+        </table>
+      </div>
       <p className="eyebrow" style={{ marginTop: "1.2rem" }}>Rashi</p>
-      <table>
-        <thead>
-          <tr><th>Body</th><th>Rashi</th><th>Entered \u2013 exits</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Surya</td><td>{data.surya_rashi?.name || data.saura_masa_name}</td><td>{win(data.surya_rashi)}</td></tr>
-          <tr><td>Chandra</td><td>{data.chandra_rashi?.name || "\u2014"}</td><td>{win(data.chandra_rashi)}</td></tr>
-        </tbody>
-      </table>
+      <div className="table-scroll" role="region" aria-label="Rashi windows" tabIndex={0}>
+        <table>
+          <thead>
+            <tr><th scope="col">Body</th><th scope="col">Rashi</th><th scope="col">Entered \u2013 exits</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Surya</td><td>{data.surya_rashi?.name || data.saura_masa_name}</td><td>{win(data.surya_rashi)}</td></tr>
+            <tr><td>Chandra</td><td>{data.chandra_rashi?.name || "\u2014"}</td><td>{win(data.chandra_rashi)}</td></tr>
+          </tbody>
+        </table>
+      </div>
       {planets.length > 0 && (
         <>
           <p className="eyebrow" style={{ marginTop: "1.2rem" }}>Planet transits</p>
-          <table>
-            <thead>
-              <tr><th>Planet</th><th>Rashi</th><th>Long</th><th>Entered \u2013 exits</th></tr>
-            </thead>
-            <tbody>
-              {planets.map((p) => (
-                <tr key={p.body}>
-                  <td>{p.body}</td>
-                  <td>{p.name}</td>
-                  <td>{p.longitude}\u00b0</td>
-                  <td>{win(p)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="table-scroll" role="region" aria-label="Planet transits" tabIndex={0}>
+            <table>
+              <thead>
+                <tr><th scope="col">Planet</th><th scope="col">Rashi</th><th scope="col">Long</th><th scope="col">Entered \u2013 exits</th></tr>
+              </thead>
+              <tbody>
+                {planets.map((p) => (
+                  <tr key={p.body}>
+                    <td>{p.body}</td>
+                    <td>{p.name}</td>
+                    <td>{p.longitude}\u00b0</td>
+                    <td>{win(p)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
       {nextEcl && (
@@ -153,20 +159,22 @@ export default function PanchangView({ data }) {
       {chog.length > 0 && (
         <>
           <p className="eyebrow" style={{ marginTop: "1.2rem" }}>Day Choghadiya</p>
-          <table>
-            <thead>
-              <tr><th>Name</th><th>Window</th><th>Note</th></tr>
-            </thead>
-            <tbody>
-              {chog.map((c) => (
-                <tr key={c.start}>
-                  <td>{c.name}</td>
-                  <td>{c.start} \u2013 {c.end}</td>
-                  <td className="muted">{c.good ? "Favourable" : "\u2014"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="table-scroll" role="region" aria-label="Day Choghadiya" tabIndex={0}>
+            <table>
+              <thead>
+                <tr><th scope="col">Name</th><th scope="col">Window</th><th scope="col">Note</th></tr>
+              </thead>
+              <tbody>
+                {chog.map((c) => (
+                  <tr key={c.start}>
+                    <td>{c.name}</td>
+                    <td>{c.start} \u2013 {c.end}</td>
+                    <td className="muted">{c.good ? "Favourable" : "\u2014"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>

@@ -90,13 +90,12 @@ export default function PlacePanel({ compact }) {
         <p className="eyebrow">01 · Your daily panchang</p>
         <h2 id="today-heading">Today in {place.name}</h2>
         <label htmlFor="city-search" className="field-label">Choose your city</label>
-        <p className="muted city-help" id="city-help">Times depend on your location. Search and select a city below.</p>
+        <p className="muted city-help" id="city-help">Times depend on your location. Search, then select a city. Use Tab to reach the suggestions.</p>
         <input
           id="city-search"
           type="search"
           aria-describedby="city-help"
-          aria-expanded={open}
-          aria-controls="city-suggestions"
+          aria-controls={open ? "city-suggestions" : undefined}
           onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}
           value={q}
           onChange={(e) => {

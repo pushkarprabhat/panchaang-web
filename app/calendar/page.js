@@ -147,7 +147,7 @@ export default function CalendarPage() {
     <>
       <p className="eyebrow">Month</p>
       <h1>Your month, at a glance.</h1>
-      <p className="lead">Choose a month and city. Language is in this bar and in the header.</p>
+      <p className="lead">Panchang, observances and planetary transits for your city. Browse, download or print the month.</p>
       <div className="row calendar-toolbar">
         <button type="button" onClick={() => shift(-1)} aria-label="Previous month">←</button>
         <strong>{first.toLocaleString("en-IN", { month: "long", year: "numeric" })}</strong>
@@ -174,22 +174,26 @@ export default function CalendarPage() {
 
       <div className="calendar-board">
         <div className="calendar-scroll" role="region" aria-label="Month calendar" tabIndex={0}>
-          <div className="cal">
+          <div className="cal" role="list" aria-label="Days of the month">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((h) => (
-              <div className="cal-h" key={h}>{h}</div>
+              <div className="cal-h" aria-hidden="true" key={h}>{h}</div>
             ))}
             {cells.map((c, i) => {
-              if (!c) return <div className="cal-cell empty" key={`e${i}`} />;
+              if (!c) return <div className="cal-cell empty" aria-hidden="true" key={`e${i}`} />;
               const row = byDate[c.key];
               const named = festivalsOn(c.key);
               const ecl = eclipsesOn(c.key);
               const bands = bandsOn(c.key);
               const panchak = panchakMarksOn(c.key);
               const vrats = row ? observances(row) : [];
-              const cls = ["cal-cell", dowClass(year, month, c.d), ...bands.map((b) => `band-${b.id}`)].join(" ");
+              const weekend = dowClass(year, month, c.d);
+              const weekendLabel = weekend === "dow-sun" ? "Sun" : weekend === "dow-sat-off" ? `${satNumber(year, month, c.d) === 2 ? "2nd" : "4th"} Sat` : "Sat";
+              const cls = ["cal-cell", weekend, ...bands.map((b) => `band-${b.id}`)].join(" ");
               return (
-                <div className={cls} key={c.key}>
-                  <strong className="cal-daynum">{c.d}</strong>
+                <div className={cls} key={c.key} role="listitem" aria-label={new Date(Date.UTC(year, month - 1, c.d)).toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })}>
+                  <div className="cal-date"><strong className="cal-daynum">{c.d}</strong>
+                    {weekend && <span className="weekend-label">{weekendLabel}</span>}
+                  </div>
                   {row && (
                     <span className="cal-tithi">
                       <TithiMoon tithi={row.tithi_number} paksha={row.paksha} size={22} />
@@ -205,7 +209,7 @@ export default function CalendarPage() {
                   {panchak.map((p) => (
                     <span className="band-label" key={p.label}>{p.label}</span>
                   ))}
-                  {bands.filter((b) => b.id !== "panchak").map((b) => (
+                  {bands.filter((b) => b.id !== "panchak" || panchak.length === 0).map((b) => (
                     <span className="band-label" key={b.id}>{b.label}</span>
                   ))}
                   {vrats.map((v) => (
@@ -223,14 +227,15 @@ export default function CalendarPage() {
           </div>
         </div>
 
-        <aside className="calendar-side">
-          <p className="eyebrow">Planet transits</p>
+        <aside className="calendar-side" aria-labelledby="planet-heading">
+          <h2 className="reference-heading" id="planet-heading">Planet transits</h2>
           {planets.length === 0 ? (
-            <p className="muted">Rebuild the API to list Mercury–Saturn here.</p>
+            <p className="muted">Planet transit data is not available for this selection.</p>
           ) : (
             <table className="side-table">
+              <caption className="sr-only">Planet transits for {city}</caption>
               <thead>
-                <tr><th>Planet</th><th>Rashi</th><th>Entered</th><th>Exits</th></tr>
+                <tr><th scope="col">Planet</th><th scope="col">Rashi</th><th scope="col">Entered</th><th scope="col">Exits</th></tr>
               </thead>
               <tbody>
                 {planets.map((p) => (
@@ -247,21 +252,22 @@ export default function CalendarPage() {
         </aside>
       </div>
 
-      <p className="eyebrow" style={{ marginTop: "1.4rem" }}>Day table</p>
-      <div className="calendar-scroll">
+      <h2 className="reference-heading" id="day-heading">Day table</h2>
+      <div className="calendar-scroll day-scroll" role="region" aria-labelledby="day-heading" tabIndex={0}>
         <table className="side-table day-table">
+          <caption className="sr-only">Daily panchang and end times for {city}</caption>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Tithi</th>
-              <th>Tithi ends</th>
-              <th>Nakshatra</th>
-              <th>Nakshatra ends</th>
-              <th>Karana</th>
-              <th>Karana ends</th>
-              <th>Yoga</th>
-              <th>Yoga ends</th>
-              <th>Sunset</th>
+              <th scope="col">Date</th>
+              <th scope="col">Tithi</th>
+              <th scope="col">Tithi ends</th>
+              <th scope="col">Nakshatra</th>
+              <th scope="col">Nakshatra ends</th>
+              <th scope="col">Karana</th>
+              <th scope="col">Karana ends</th>
+              <th scope="col">Yoga</th>
+              <th scope="col">Yoga ends</th>
+              <th scope="col">Sunset</th>
             </tr>
           </thead>
           <tbody>
@@ -286,10 +292,12 @@ export default function CalendarPage() {
       <div className="calendar-legend">
         <p><strong>Legend</strong></p>
         <ul>
+          <li><strong>Sun / Sat</strong> mark weekends; <strong>2nd / 4th Sat</strong> mark typical bank holidays.</li>
+          <li><strong>Panchak</strong> is labelled on every day in its marked period.</li>
           <li><strong>Sh</strong> = Shukla paksha. <strong>Kr</strong> = Krishna paksha.</li>
-          <li>Moon disc = tithi at sunrise. Larger gold = more light.</li>
+          <li>Moon disc = tithi at sunrise. Larger light area = more illumination.</li>
           <li>Rise / Set = sunrise and sunset at the selected city (IST).</li>
-          <li>Day table end-times need the latest API rebuild.</li>
+          <li>A dash indicates unavailable data.</li>
         </ul>
       </div>
       <p className="calendar-plans"><Link href="/pricing">Explore family and temple plans →</Link></p>
