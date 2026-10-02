@@ -1,9 +1,19 @@
 {
-  "project": "Panchaang",
-  "identifier": "PANCH",
+  "key_file": "../.env.plane",
+  "projects": [
+    {
+      "project": "Panchaang Web",
+      "identifier": "PWEB",
+      "import_csv": "docs/lifecycle/plane-import.csv"
+    },
+    {
+      "project": "Panchaang Engine",
+      "identifier": "PENG",
+      "import_csv": ""
+    }
+  ],
   "cycle_days": 14,
   "states": ["Backlog", "Speccing", "Ready", "In Progress", "PR Raised", "In Review", "Staging", "Done", "Cancelled"],
   "labels": ["feature", "bug", "spike", "docs", "ops", "content", "blocked"],
-  "modules": ["Engine", "Web", "Billing", "Legal", "Content"],
-  "import_csv": "docs/lifecycle/plane-import.csv"
+  "modules": ["Engine", "Web", "Billing", "Legal", "Content"]
 }
