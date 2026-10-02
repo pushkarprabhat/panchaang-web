@@ -1,11 +1,9 @@
-"""Create Plane projects from docs/lifecycle/plane-project.json.
+"""Fill a Plane project from docs/lifecycle/plane-project.json.
 
-The key file is the parent folder, not this repo:
-  D:/TheiaOne_Programs/Projects/Panchaang-Engine/.env.plane
+One workspace. One project for both repositories.
+Key file: D:/TheiaOne_Programs/Projects/Panchaang-Engine/.env.plane
 
-  python scripts/plane_setup.py
-  python scripts/plane_setup.py --all
-  python scripts/plane_setup.py --name "Manekbaba"
+  python scripts/plane_setup.py --into PANCHAANG
 """
 import argparse
 import csv
@@ -55,94 +53,76 @@ def api(method, url, payload=None, allow=(409,)):
         raise SystemExit(f"{method} {url} failed: {exc.code} {detail}") from exc
 
 
-def project_id(base, workspace, chosen):
+def rows_of(payload):
+    if isinstance(payload, list):
+        return payload
+    return payload.get("results", [])
+
+
+def find_project(base, workspace, name):
     root = f"{base}/api/v1/workspaces/{workspace}"
-    created = api("POST", f"{root}/projects/", {
-        "name": chosen["project"],
-        "identifier": chosen["identifier"],
-    })
-    if created.get("id"):
-        return created["id"], root
     found = api("GET", f"{root}/projects/")
-    rows = found.get("results", found if isinstance(found, list) else [])
-    for row in rows:
-        if row.get("identifier") == chosen["identifier"] or row.get("name") == chosen["project"]:
+    want = name.lower()
+    for row in rows_of(found):
+        if row.get("name", "").lower() == want or row.get("identifier", "").lower() == want:
             return row["id"], root
-    raise SystemExit(f"Could not find {chosen['project']} after it already existed")
+    raise SystemExit(f"No project named {name} in workspace {workspace}")
 
 
-def create_project(base, workspace, spec, chosen):
-    pid, root = project_id(base, workspace, chosen)
-    print(f"project {chosen['project']} {pid}")
+def fill(base, workspace, spec, name, import_csv):
+    pid, root = find_project(base, workspace, name)
+    print(f"project {name} {pid}")
     api("PATCH", f"{root}/projects/{pid}/", {"module_view": True}, allow=(400, 409))
-    for i, name in enumerate(spec["states"], start=1):
+    for i, state in enumerate(spec["states"], start=1):
         group = "backlog"
-        if name == "Done":
+        if state == "Done":
             group = "completed"
-        elif name == "Cancelled":
+        elif state == "Cancelled":
             group = "cancelled"
-        elif name == "In Progress":
+        elif state == "In Progress":
             group = "started"
         api("POST", f"{root}/projects/{pid}/states/", {
-            "name": name, "color": "#16324f", "group": group, "sequence": i,
+            "name": state, "color": "#16324f", "group": group, "sequence": i,
         })
-        print(f"state {name}")
-    for name in spec["labels"]:
-        api("POST", f"{root}/projects/{pid}/labels/", {"name": name, "color": "#c2410c"})
-        print(f"label {name}")
+        print(f"state {state}")
+    for label in spec["labels"]:
+        api("POST", f"{root}/projects/{pid}/labels/", {"name": label, "color": "#c2410c"})
+        print(f"label {label}")
     modules_on = True
-    for name in spec.get("modules", []):
+    for module in spec.get("modules", []):
         if not modules_on:
             break
-        made = api("POST", f"{root}/projects/{pid}/modules/", {"name": name}, allow=(400, 409))
+        made = api("POST", f"{root}/projects/{pid}/modules/", {"name": module}, allow=(400, 409))
         if "not enabled" in json.dumps(made).lower():
-            print("modules skipped, turn them on in Plane project settings")
+            print("modules skipped")
             modules_on = False
             continue
-        print(f"module {name}")
-    csv_path = ROOT / chosen.get("import_csv", "")
-    if chosen.get("import_csv") and csv_path.exists():
-        with csv_path.open(encoding="utf-8") as handle:
-            for row in csv.DictReader(handle):
-                api("POST", f"{root}/projects/{pid}/issues/", {
-                    "name": row["Name"],
-                    "description_html": f"<p>{row.get('Notes', '')}</p>",
-                })
-                print(f"item {row['Name']}")
-
-
-def choose(projects, args):
-    if args.name:
-        ident = "".join(ch for ch in args.name.upper() if ch.isalnum())[:5] or "PROJ"
-        return [{"project": args.name, "identifier": ident, "import_csv": ""}]
-    if args.all:
-        return projects
-    print("Create which Plane project?")
-    for i, item in enumerate(projects, start=1):
-        print(f"  {i}. {item['project']}")
-    print(f"  {len(projects) + 1}. both")
-    print("  0. type a new name")
-    raw = input("Number: ").strip()
-    if raw == "0":
-        name = input("Project name: ").strip()
-        ident = "".join(ch for ch in name.upper() if ch.isalnum())[:5] or "PROJ"
-        return [{"project": name, "identifier": ident, "import_csv": ""}]
-    if raw == str(len(projects) + 1):
-        return projects
-    return [projects[int(raw) - 1]]
+        print(f"module {module}")
+    if not import_csv:
+        return
+    existing = {row.get("name") for row in rows_of(api("GET", f"{root}/projects/{pid}/issues/"))}
+    csv_path = ROOT / import_csv
+    with csv_path.open(encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            if row["Name"] in existing:
+                print(f"item exists {row['Name']}")
+                continue
+            api("POST", f"{root}/projects/{pid}/issues/", {
+                "name": row["Name"],
+                "description_html": f"<p>{row.get('Notes', '')}</p>",
+            })
+            print(f"item {row['Name']}")
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--all", action="store_true")
-    parser.add_argument("--name")
+    parser.add_argument("--into", default="PANCHAANG")
     args = parser.parse_args()
     spec = json.loads(INSTRUCTION.read_text(encoding="utf-8"))
     key_file = load_key(spec)
     print(f"key file {key_file}")
     base = os.environ.get("PLANE_BASE", "https://api.plane.so").rstrip("/")
-    for chosen in choose(spec["projects"], args):
-        create_project(base, os.environ["PLANE_WORKSPACE"], spec, chosen)
+    fill(base, os.environ["PLANE_WORKSPACE"], spec, args.into, spec["projects"][0]["import_csv"])
     print("done")
 
 
