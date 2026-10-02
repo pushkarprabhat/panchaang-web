@@ -1,4 +1,5 @@
 import "./globals.css";
+import "./theme.css";
 import Link from "next/link";
 import LangToggle from "./lang-toggle";
 import Providers from "./providers";
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
               <Link href="/eclipses">Eclipses</Link>
               <Link href="/tools">Tools</Link>
               <Link href="/pricing">Plans</Link>
+              <Link href="/account">Account</Link>
               <LangToggle />
               <span className="auth-action"><AuthBar /></span>
             </nav>
@@ -62,8 +64,9 @@ export default function RootLayout({ children }) {
                 <Link href="/about">About</Link>
                 <Link href="/contact">Contact</Link>
                 <Link href="/services">Services</Link>
-                <Link href="/pricing">Plans & pricing</Link>
-                <Link href="/compare">Compare</Link>
+                <Link href="/pricing">Plans</Link>
+                <Link href="/account">Account</Link>
+                <Link href="/hold">Hold list</Link>
                 <Link href="/api-docs">API</Link>
               </div>
               <div>
