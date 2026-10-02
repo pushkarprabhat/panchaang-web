@@ -1,0 +1,9 @@
+Name,State,Type,Module,Blocked by,Notes
+Replace AGPL notice on engine,Ready,Ops,Engine,,Repo is private. LICENSE file and README still say AGPL. Owner can relicense forward. Past public copies stay AGPL.
+Disable forking on panchaang-engine,Ready,Ops,Engine,,Settings. Private is not enough if a collaborator can fork.
+Confirm VM deploy key still works,Ready,Ops,Engine,,Private repo needs a deploy key or token on the Mumbai VM.
+Hora on paid plan only,Staging,Feature,Web,,Built. Needs a production check on panchaang.in.
+Yamagandam and Gulika,Staging,Feature,Web,,Built from sunrise. Needs a production check.
+Subscription counts in browser,In Progress,Feature,Billing,,Rules are in data/entitlements.js. Database waits for Razorpay.
+Hold list review,Backlog,Docs,Content,,Items 1-7 dated 2026-10-02. Do not build until reviewed.
+Plane project Panchaang,Ready,Ops,Web,,Create states from docs/lifecycle/PLANE.md and import this file.
