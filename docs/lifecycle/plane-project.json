@@ -2,14 +2,9 @@
   "key_file": "../.env.plane",
   "projects": [
     {
-      "project": "Panchaang Web",
-      "identifier": "PWEB",
+      "project": "PANCHAANG",
+      "identifier": "PANCH",
       "import_csv": "docs/lifecycle/plane-import.csv"
-    },
-    {
-      "project": "Panchaang Engine",
-      "identifier": "PENG",
-      "import_csv": ""
     }
   ],
   "cycle_days": 14,
